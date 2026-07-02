@@ -1,0 +1,9 @@
+{
+    "name": "dry_bean",
+    "source": "UCI Machine Learning Repository",
+    "uci_id": 602,
+    "target": "Class",
+    "task": "multiclass",
+    "samples": 13611,
+    "features": 16
+}

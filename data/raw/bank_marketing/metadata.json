@@ -1,0 +1,9 @@
+{
+    "name": "bank_marketing",
+    "source": "UCI Machine Learning Repository",
+    "uci_id": 222,
+    "target": "y",
+    "task": "binary",
+    "samples": 45211,
+    "features": 16
+}

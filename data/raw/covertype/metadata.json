@@ -1,0 +1,8 @@
+{
+    "name": "covertype",
+    "source": "scikit-learn",
+    "target": "target",
+    "task": "multiclass",
+    "samples": 581012,
+    "features": 54
+}

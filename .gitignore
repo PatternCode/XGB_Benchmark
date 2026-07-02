@@ -14,12 +14,10 @@ venv/
 env/
 ENV/
 .env
-
-# Conda
 *.conda
 
 # ==========================================================
-# Jupyter Notebook
+# Jupyter
 # ==========================================================
 .ipynb_checkpoints/
 
@@ -30,7 +28,7 @@ ENV/
 .idea/
 
 # ==========================================================
-# Operating System Files
+# Operating System
 # ==========================================================
 .DS_Store
 Thumbs.db
@@ -41,37 +39,19 @@ Thumbs.db
 *.log
 
 # ==========================================================
-# Python Testing
+# Testing
 # ==========================================================
 .pytest_cache/
 .coverage
 htmlcov/
 
 # ==========================================================
-# Build Files
+# Build & Packaging
 # ==========================================================
 build/
 dist/
 *.egg-info/
-
-# ==========================================================
-# Datasets
-#
-# Keep the folder structure but ignore the actual datasets.
-# ==========================================================
-data/raw/*
-!data/raw/.gitkeep
-
-data/processed/*
-!data/processed/.gitkeep
-
-# ==========================================================
-# Experiment Outputs
-#
-# Keep the directory but ignore generated files.
-# ==========================================================
-results/*
-!results/.gitkeep
+.eggs/
 
 # ==========================================================
 # Temporary Files
@@ -82,16 +62,94 @@ results/*
 *~
 
 # ==========================================================
-# Model Files (optional)
+# Data
 #
-# Uncomment if you decide to save trained models locally.
+# Keep folder structure and metadata under version control.
+# Ignore the actual dataset files.
 # ==========================================================
-# models/*
+
+# Raw datasets
+data/raw/**/*.csv
+data/raw/**/*.tsv
+data/raw/**/*.txt
+data/raw/**/*.xlsx
+data/raw/**/*.xls
+data/raw/**/*.arff
+data/raw/**/*.data
+data/raw/**/*.dat
+data/raw/**/*.jsonl
+data/raw/**/*.parquet
+data/raw/**/*.feather
+data/raw/**/*.h5
+data/raw/**/*.hdf5
+data/raw/**/*.zip
+data/raw/**/*.gz
+data/raw/**/*.7z
+data/raw/**/*.rar
+data/raw/**/*.tar
+data/raw/**/*.tgz
+
+# Processed datasets
+data/processed/**/*.csv
+data/processed/**/*.tsv
+data/processed/**/*.txt
+data/processed/**/*.xlsx
+data/processed/**/*.xls
+data/processed/**/*.parquet
+data/processed/**/*.feather
+data/processed/**/*.pkl
+data/processed/**/*.joblib
+data/processed/**/*.npy
+data/processed/**/*.npz
+
+# Keep documentation and metadata
+!data/README.md
+!data/raw/**/metadata.json
+!data/raw/**/.gitkeep
+!data/processed/**/.gitkeep
+
+# ==========================================================
+# Experiment Outputs
+# ==========================================================
+
+# Ignore everything generated during benchmarking
+results/**
+
+# Keep directory structure
+!results/.gitkeep
+
+# ==========================================================
+# Trained Models
+#
+# Uncomment if models are stored locally.
+# ==========================================================
+
+# models/**
 # !models/.gitkeep
 
 # ==========================================================
-# Environment Files
-#
-# Ignore local environment configuration files.
+# MLflow (if used locally)
 # ==========================================================
+
+mlruns/
+mlartifacts/
+mlflow.db
+
+# ==========================================================
+# Environment Files
+# ==========================================================
+
 .env.local
+
+# ==========================================================
+# Editor History
+# ==========================================================
+
+.history/
+
+# ==========================================================
+# Miscellaneous
+# ==========================================================
+
+*.pid
+*.seed

@@ -1,0 +1,8 @@
+{
+    "name": "adult_income",
+    "source": "OpenML",
+    "target": "class",
+    "task": "binary",
+    "samples": 48842,
+    "features": 14
+}

@@ -1,0 +1,8 @@
+{
+    "name": "breast_cancer_wisconsin",
+    "source": "scikit-learn",
+    "target": "target",
+    "task": "binary",
+    "samples": 569,
+    "features": 30
+}

@@ -1,0 +1,9 @@
+{
+    "name": "steel_plates_faults",
+    "source": "UCI Machine Learning Repository",
+    "uci_id": 198,
+    "target": "fault_type",
+    "task": "multiclass",
+    "samples": 1941,
+    "features": 27
+}

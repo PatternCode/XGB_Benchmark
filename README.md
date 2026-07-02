@@ -187,3 +187,38 @@ If you use this repository in your research, please cite the associated publicat
 
 ### Phase 4
 - [ ] Paper submission
+
+---- 
+I added this:
+
+src/
+├── benchmark/
+│   ├── runner.py
+│   ├── metrics.py
+│   ├── reporting.py
+│   └── experiment.py
+│
+├── data/
+│   ├── registry.py
+│   ├── download.py
+│   ├── loader.py
+│   ├── prepare.py
+│   └── validator.py
+│
+├── evaluation/
+│   ├── calibration.py
+│   ├── explainability.py
+│   ├── statistical_tests.py
+│   └── visualization.py
+│
+├── features/
+│   ├── preprocessing.py
+│   ├── encoding.py
+│   ├── scaling.py
+│   └── selection.py
+│
+└── models/
+    ├── xgboost_model.py
+    ├── baselines.py
+    ├── tuning.py
+    └── cross_validation.py
