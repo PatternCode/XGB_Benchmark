@@ -1,0 +1,15 @@
+{
+    "key": "higgs",
+    "name": "HIGGS",
+    "domain": "particle_physics",
+    "source": "UCI Machine Learning Repository",
+    "url": "https://archive.ics.uci.edu/ml/datasets/HIGGS",
+    "target": "class",
+    "task": "binary",
+    "size": "very_large",
+    "download": "manual",
+    "expected_files": [
+        "HIGGS.csv.gz"
+    ],
+    "notes": "Very large dataset; manual download is recommended."
+}

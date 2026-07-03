@@ -1,0 +1,13 @@
+{
+    "key": "credit_card_fraud",
+    "name": "Credit Card Fraud",
+    "domain": "finance",
+    "source": "Kaggle",
+    "target": "Class",
+    "task": "binary",
+    "size": "large",
+    "samples": 284807,
+    "features": 30,
+    "kaggle_slug": "mlg-ulb/creditcardfraud",
+    "requires_auth": true
+}

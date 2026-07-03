@@ -1,3 +1,4 @@
 openml
 ucimlrepo
 pyarrow
+kagglehub[pandas-datasets]

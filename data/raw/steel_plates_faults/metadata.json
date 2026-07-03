@@ -1,9 +1,12 @@
 {
-    "name": "steel_plates_faults",
+    "key": "steel_plates_faults",
+    "name": "Steel Plates Faults",
+    "domain": "manufacturing",
     "source": "UCI Machine Learning Repository",
-    "uci_id": 198,
     "target": "fault_type",
     "task": "multiclass",
+    "size": "small",
     "samples": 1941,
-    "features": 27
+    "features": 27,
+    "uci_id": 198
 }

@@ -1,8 +1,11 @@
 {
-    "name": "covertype",
+    "key": "covertype",
+    "name": "Covertype",
+    "domain": "forestry",
     "source": "scikit-learn",
     "target": "target",
     "task": "multiclass",
+    "size": "large",
     "samples": 581012,
     "features": 54
 }

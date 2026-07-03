@@ -1,8 +1,11 @@
 {
-    "name": "adult_income",
+    "key": "adult_income",
+    "name": "Adult Income",
+    "domain": "census",
     "source": "OpenML",
     "target": "class",
     "task": "binary",
+    "size": "small",
     "samples": 48842,
     "features": 14
 }

@@ -1,0 +1,15 @@
+{
+    "key": "cic_ids2017",
+    "name": "CIC-IDS2017",
+    "domain": "cybersecurity",
+    "source": "Canadian Institute for Cybersecurity",
+    "url": "https://www.unb.ca/cic/datasets/ids-2017.html",
+    "target": "Label",
+    "task": "multiclass",
+    "size": "very_large",
+    "download": "manual",
+    "expected_files": [
+        "*.csv"
+    ],
+    "notes": "Very large dataset; manual download is recommended."
+}

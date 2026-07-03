@@ -1,8 +1,11 @@
 {
-    "name": "breast_cancer_wisconsin",
+    "key": "breast_cancer_wisconsin",
+    "name": "Breast Cancer Wisconsin",
+    "domain": "healthcare",
     "source": "scikit-learn",
     "target": "target",
     "task": "binary",
+    "size": "small",
     "samples": 569,
     "features": 30
 }

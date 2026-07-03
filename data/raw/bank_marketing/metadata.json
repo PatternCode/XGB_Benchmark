@@ -1,9 +1,12 @@
 {
-    "name": "bank_marketing",
+    "key": "bank_marketing",
+    "name": "Bank Marketing",
+    "domain": "finance",
     "source": "UCI Machine Learning Repository",
-    "uci_id": 222,
     "target": "y",
     "task": "binary",
+    "size": "medium",
     "samples": 45211,
-    "features": 16
+    "features": 16,
+    "uci_id": 222
 }

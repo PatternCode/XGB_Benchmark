@@ -1,9 +1,12 @@
 {
-    "name": "dry_bean",
+    "key": "dry_bean",
+    "name": "Dry Bean",
+    "domain": "agriculture",
     "source": "UCI Machine Learning Repository",
-    "uci_id": 602,
     "target": "Class",
     "task": "multiclass",
+    "size": "small",
     "samples": 13611,
-    "features": 16
+    "features": 16,
+    "uci_id": 602
 }

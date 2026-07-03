@@ -1,0 +1,13 @@
+{
+    "key": "unsw_nb15",
+    "name": "UNSW-NB15",
+    "domain": "cybersecurity",
+    "source": "Kaggle",
+    "target": "attack",
+    "task": "multiclass",
+    "size": "large",
+    "samples": 340693,
+    "features": 39,
+    "kaggle_slug": "ucimachinelearning/unsw-nb15-dataset",
+    "requires_auth": true
+}
