@@ -1,6 +1,6 @@
 # XGB_Benchmark
 
-A reproducible benchmarking framework for evaluating XGBoost intrinsic feature importance against SHAP-based feature selection on tabular datasets.
+A reproducible benchmarking framework for evaluating **XGBoost intrinsic feature importance** against **SHAP-based feature selection** on diverse tabular datasets.
 
 ---
 
@@ -8,7 +8,7 @@ A reproducible benchmarking framework for evaluating XGBoost intrinsic feature i
 
 XGB_Benchmark is an open-source research project that investigates whether the intrinsic feature-importance metrics produced by XGBoost can serve as efficient alternatives to SHAP-based feature selection.
 
-The project focuses on explainable machine learning for tabular data and aims to evaluate the effectiveness of XGBoost's built-in feature-importance metrics—Gain, Cover, and Weight—across a diverse collection of benchmark datasets.
+The project focuses on explainable machine learning for tabular data and aims to evaluate the effectiveness of XGBoost's built-in feature-importance metrics—**Gain**, **Cover**, and **Weight**—across a diverse collection of benchmark datasets.
 
 ---
 
@@ -23,7 +23,7 @@ Can XGBoost's intrinsic feature-importance metrics provide feature subsets that 
 The objectives of this project are to:
 
 - Compare Gain, Cover, Weight, and SHAP for feature selection.
-- Evaluate feature selection across a wide range of tabular datasets.
+- Evaluate feature selection across a diverse collection of benchmark datasets.
 - Train interpretable downstream models using the selected features.
 - Compare predictive performance, interpretability, and computational efficiency.
 - Build a reproducible benchmarking framework for future research.
@@ -34,7 +34,7 @@ The objectives of this project are to:
 
 For each dataset, the following pipeline will be executed:
 
-```
+```text
 Dataset
     │
     ▼
@@ -76,35 +76,114 @@ Additional feature-selection methods will be incorporated in future releases.
 
 ---
 
-## Candidate Datasets
+# Benchmark Datasets
 
-The benchmark will initially focus on publicly available tabular datasets from multiple domains, including:
+The benchmark currently supports datasets from multiple public repositories spanning several application domains.
 
-- Cybersecurity
-- Healthcare
-- Finance
-- Manufacturing
-- Physics
-- General machine learning benchmarks
+| Dataset | Domain | Task | Source | Download |
+|---------|--------|------|--------|----------|
+| Adult Income | Census | Binary Classification | OpenML | Automatic |
+| Breast Cancer Wisconsin | Healthcare | Binary Classification | scikit-learn | Automatic |
+| Dry Bean | Agriculture | Multiclass Classification | UCI ML Repository | Automatic |
+| Bank Marketing | Finance | Binary Classification | UCI ML Repository | Automatic |
+| Steel Plates Faults | Manufacturing | Multiclass Classification | UCI ML Repository | Automatic |
+| Covertype | Forestry | Multiclass Classification | scikit-learn | Automatic |
+| Credit Card Fraud | Finance | Binary Classification | Kaggle | Automatic* |
+| UNSW-NB15 | Cybersecurity | Multiclass Classification | Kaggle | Automatic* |
+| CIC-IDS2017 | Cybersecurity | Multiclass Classification | Canadian Institute for Cybersecurity | Manual |
+| HIGGS | Particle Physics | Binary Classification | UCI Machine Learning Repository | Manual |
+
+\* Requires a configured Kaggle account.
+
+---
+
+# Data Pipeline
+
+One of the primary goals of this project is to provide a **reproducible and consistent data pipeline**, regardless of the original dataset source.
+
+Every dataset follows the same lifecycle:
+
+```text
+Official Dataset
+        │
+        ▼
+Download
+        │
+        ▼
+Raw Data Standardization
+        │
+        ▼
+data/raw/<dataset>/
+    ├── data.csv
+    └── metadata.json
+        │
+        ▼
+Data Preparation
+        │
+        ▼
+data/processed/<dataset>/
+        │
+        ▼
+Benchmark Pipeline
+```
+
+## Raw Data
+
+The `data/raw/` directory contains **standardized raw datasets**.
+
+Every dataset follows the same structure:
+
+```text
+data/raw/
+└── <dataset_name>/
+    ├── data.csv
+    └── metadata.json
+```
+
+Datasets are obtained from multiple sources, including:
+
+- OpenML
+- scikit-learn
+- UCI Machine Learning Repository
+- Kaggle
+- Manual download
+
+Datasets that require manual acquisition (currently **HIGGS** and **CIC-IDS2017**) additionally include a `README.md` describing:
+
+- where to obtain the original dataset,
+- how to standardize the raw files,
+- and how to organize them into the expected project structure.
+
+## Processed Data
+
+The `data/processed/` directory contains datasets after preprocessing and transformation.
+
+Regardless of the original source, every processed dataset will share a common format, allowing the benchmarking pipeline to operate independently of the original data source.
 
 ---
 
 ## Reproducibility
 
-One of the primary goals of this repository is reproducible research.
+Reproducibility is a primary design goal of this project.
 
-The benchmark is being developed to ensure that every experiment can be reproduced using identical datasets, preprocessing steps, model configurations, and random seeds.
+Every experiment is designed to be reproducible using identical:
+
+- datasets
+- preprocessing steps
+- train/test splits
+- model configurations
+- random seeds
 
 ---
 
 ## Repository Structure
 
-```
+```text
 XGB_Benchmark/
 
 ├── README.md
-├── requirements.txt
 ├── LICENSE
+├── requirements.txt
 ├── .gitignore
 │
 ├── data/
@@ -112,18 +191,68 @@ XGB_Benchmark/
 │   └── processed/
 │
 ├── src/
+│   ├── benchmark/
+│   ├── data/
+│   ├── evaluation/
+│   ├── features/
+│   └── models/
+│
 ├── experiments/
-├── results/
-└── notebooks/
+├── notebooks/
+└── results/
 ```
+
+### Module Responsibilities
+
+| Module | Responsibility |
+|---------|----------------|
+| **benchmark** | Executes benchmarking experiments and orchestrates the evaluation pipeline. |
+| **data** | Dataset registry, downloading, loading, preprocessing, validation, and dataset management. |
+| **evaluation** | Performance metrics, explainability analysis, statistical testing, and visualization. |
+| **features** | Feature preprocessing, encoding, scaling, and feature selection. |
+| **models** | Model training, hyperparameter tuning, cross-validation, and baseline implementations. |
 
 ---
 
 ## Project Status
 
-🚧 The repository is currently under active development.
+🚧 **The repository is currently under active development.**
 
-The initial milestone is to implement a fully automated benchmarking pipeline for comparing XGBoost intrinsic feature importance with SHAP on a single dataset. The framework will then be extended to multiple benchmark datasets.
+The first milestone is to build a fully automated benchmarking framework capable of evaluating intrinsic XGBoost feature importance against SHAP across multiple benchmark datasets.
+
+---
+
+## Roadmap
+
+### Phase 1 — Data Infrastructure
+
+- [x] Repository setup
+- [x] Dataset registry
+- [x] Multi-source dataset downloader
+- [x] Raw data standardization
+- [ ] Dataset inspection
+- [ ] Dataset preparation
+- [ ] Dataset validation
+
+### Phase 2 — Benchmark Core
+
+- [ ] XGBoost training pipeline
+- [ ] Intrinsic feature importance extraction
+- [ ] SHAP implementation
+- [ ] Decision Tree benchmark
+- [ ] Cross-validation framework
+
+### Phase 3 — Evaluation
+
+- [ ] Benchmark automation
+- [ ] Statistical significance analysis
+- [ ] Visualization
+- [ ] Automatic report generation
+
+### Phase 4 — Research
+
+- [ ] Multi-dataset benchmark
+- [ ] Paper submission
 
 ---
 
@@ -132,17 +261,14 @@ The initial milestone is to implement a fully automated benchmarking pipeline fo
 Future versions of the benchmark may include:
 
 - Additional feature-selection methods
-- More explainable classifiers
-- Automated benchmarking
-- Statistical significance analysis
-- Automatic report generation
-- OpenML integration
+- More explainable machine learning models
+- GPU benchmarking
+- Distributed benchmarking
+- Automatic hyperparameter optimization
+- OpenML benchmark integration
+- Meta-learning experiments
 
 ---
-
-## License
-
-This project is released under the MIT License.
 
 ## Installation
 
@@ -151,74 +277,29 @@ Clone the repository:
 ```bash
 git clone https://github.com/PatternCode/XGB_Benchmark.git
 cd XGB_Benchmark
+
 conda env create -f environment.yml
 conda activate xgb_benchmark
+
 pip install -r requirements.txt
+```
+
+---
 
 ## Contributing
 
 Contributions are welcome.
 
-If you would like to contribute a new dataset, feature-selection method, or evaluation metric, please open an issue or submit a pull request.
+If you would like to contribute a new dataset, feature-selection method, benchmark model, or evaluation metric, please open an issue or submit a pull request.
 
+---
 
 ## Citation
 
 If you use this repository in your research, please cite the associated publication once it becomes available.
-```
 
-## Roadmap
+---
 
-### Phase 1
-- [x] Repository setup
-- [ ] Dataset loading
-- [ ] XGBoost training
-- [ ] Feature importance extraction
+## License
 
-### Phase 2
-- [ ] SHAP implementation
-- [ ] Decision Tree benchmark
-- [ ] Evaluation pipeline
-
-### Phase 3
-- [ ] Multi-dataset benchmark
-- [ ] Automatic report generation
-- [ ] Statistical significance analysis
-
-### Phase 4
-- [ ] Paper submission
-
----- 
-I added this:
-
-src/
-├── benchmark/
-│   ├── runner.py
-│   ├── metrics.py
-│   ├── reporting.py
-│   └── experiment.py
-│
-├── data/
-│   ├── registry.py
-│   ├── download.py
-│   ├── loader.py
-│   ├── prepare.py
-│   └── validator.py
-│
-├── evaluation/
-│   ├── calibration.py
-│   ├── explainability.py
-│   ├── statistical_tests.py
-│   └── visualization.py
-│
-├── features/
-│   ├── preprocessing.py
-│   ├── encoding.py
-│   ├── scaling.py
-│   └── selection.py
-│
-└── models/
-    ├── xgboost_model.py
-    ├── baselines.py
-    ├── tuning.py
-    └── cross_validation.py
+This project is released under the MIT License.
