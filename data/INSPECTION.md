@@ -379,3 +379,256 @@ The most important observations are:
 - The generated **SHA-256 hashes** and **feature-name hashes** provide an additional layer of reproducibility by allowing verification of both the raw data files and their schemas.
 
 These observations form the design requirements for the next stage of the project: the implementation of `prepare.py`.
+
+
+
+---
+# Raw Dataset Inspection
+
+## Purpose
+
+The `inspect_raw.py` utility performs a comprehensive, read-only inspection of every raw dataset used in the **XGB_Benchmark** project.
+
+Its primary objective is to characterize the structure, integrity, and quality of each dataset **before** any preprocessing is applied. The inspection stage never modifies the original data. Instead, it provides the evidence required to design, validate, and maintain a deterministic dataset preparation pipeline.
+
+By separating inspection from preprocessing, the benchmark ensures that preparation decisions are driven by measured dataset characteristics rather than assumptions or dataset-specific heuristics.
+
+---
+
+# Inspection Workflow
+
+Every raw dataset follows the inspection workflow shown below.
+
+```text
+Raw Dataset
+      │
+      ▼
+inspect_raw.py
+      │
+      ▼
+Inspection Reports
+      │
+      ▼
+prepare.py
+      │
+      ▼
+Canonical Processed Dataset
+```
+
+Inspection is therefore the first stage of the benchmark data pipeline and serves as the foundation for all subsequent preprocessing.
+
+---
+
+# Expected Dataset Structure
+
+Every registered dataset is expected to follow the standardized directory structure below.
+
+```text
+data/
+└── raw/
+    └── <dataset_key>/
+        ├── data.csv
+        └── metadata.json
+```
+
+Some manually downloaded datasets may additionally include a `README.md` containing dataset-specific notes.
+
+---
+
+# Running the Inspection
+
+## Quick inspection
+
+Processes the first 10,000 rows of each dataset.
+
+```bash
+python src/data/inspect_raw.py
+```
+
+---
+
+## Custom sample size
+
+```bash
+python src/data/inspect_raw.py --max-rows 50000
+```
+
+---
+
+## Full inspection
+
+Processes the complete dataset.
+
+```bash
+python src/data/inspect_raw.py --full
+```
+
+For very large datasets such as **HIGGS** and **CIC-IDS2017**, a full inspection may require substantial memory and execution time.
+
+---
+
+# Generated Reports
+
+Running the inspection produces two reports under
+
+```text
+data/reports/
+```
+
+```
+inspection_report.json
+inspection_summary.csv
+```
+
+These reports summarize the structural and statistical properties of every inspected dataset.
+
+Since they can be regenerated at any time, they generally should not be committed to version control.
+
+---
+
+# Information Collected
+
+For every dataset, the inspection records the following information.
+
+## Dataset metadata
+
+- dataset key
+- dataset name
+- application domain
+- machine learning task
+- dataset size category
+
+---
+
+## Dataset integrity
+
+- existence of required files
+- target column
+- target existence
+- target data type
+- SHA-256 hash of the raw dataset
+- feature-name hash
+
+---
+
+## Dataset dimensions
+
+- number of observations
+- number of columns
+- number of predictor variables
+
+---
+
+## Feature composition
+
+- numerical features
+- categorical features
+- binary indicator features
+- continuous numerical features
+
+---
+
+## Data quality
+
+- missing values
+- textual missing-value tokens
+- infinite values
+- duplicate rows
+- zero-variance features
+- duplicate feature columns
+
+---
+
+## Target information
+
+- class labels
+- class frequencies
+- class imbalance
+
+---
+
+## Summary statistics
+
+When applicable, numerical summary statistics are computed, including:
+
+- minimum
+- maximum
+- mean
+- standard deviation
+
+The inspection also reports memory usage and categorical cardinalities where appropriate.
+
+---
+
+# Dataset-Specific Handling
+
+The inspection framework is designed to be dataset-agnostic. Dataset-specific handling is introduced only when necessary to correctly interpret the published data.
+
+Current exceptions include:
+
+## HIGGS
+
+The original HIGGS dataset does not contain a header row.
+
+During inspection, the script automatically assigns the following column names:
+
+```text
+class
+feature_1
+feature_2
+...
+feature_28
+```
+
+---
+
+## CIC-IDS2017
+
+Several feature names contain leading or trailing whitespace.
+
+The inspection standardizes column names immediately after loading the dataset to ensure consistent schema validation.
+
+No other modifications are applied.
+
+---
+
+# Role in the Data Pipeline
+
+The inspection stage is intentionally independent of dataset preparation.
+
+Its responsibilities are limited to:
+
+- validating raw datasets;
+- measuring dataset characteristics;
+- identifying potential data-quality issues;
+- generating reproducible inspection reports.
+
+The inspection stage does **not** modify datasets, remove observations, encode variables, or perform any preprocessing.
+
+All dataset transformations are delegated to `prepare.py`.
+
+---
+
+# Reproducibility
+
+Inspection results are fully deterministic.
+
+Given the same raw dataset, the inspection utility always produces identical reports and dataset hashes.
+
+This allows both datasets and inspection results to be independently verified and provides a reproducible foundation for the preparation stage.
+
+---
+
+# Summary
+
+The inspection stage provides an objective characterization of every raw dataset before preprocessing begins.
+
+Its outputs:
+
+- validate dataset integrity;
+- identify structural and statistical characteristics;
+- document potential quality issues;
+- support the design and verification of the preparation pipeline;
+- improve the transparency and reproducibility of the benchmark.
+
+Together with the canonical preparation stage, the inspection utility forms the foundation of the data management workflow used throughout the **XGB_Benchmark** project.

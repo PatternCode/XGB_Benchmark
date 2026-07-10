@@ -1,0 +1,226 @@
+{
+  "preparation_version": "1.0",
+  "dataset_key": "breast_cancer_wisconsin",
+  "dataset_name": "Breast Cancer Wisconsin",
+  "domain": "healthcare",
+  "task": "binary",
+  "size": "small",
+  "source_file": "data/raw/breast_cancer_wisconsin/data.csv",
+  "source_sha256": "75a1d74a59df9cb0a78ecc0a36085bf8a85239557f178d3b8d758e88b26416e1",
+  "processed_file": "data/processed/breast_cancer_wisconsin/data.csv",
+  "processed_sha256": "9b9e3a2fe53a2264f7e756aff00ab883450186c47bfb2027b4d90ca51d23347d",
+  "original_target_column": "target",
+  "standardized_original_target_column": "target",
+  "target_column": "target",
+  "target_mapping": [
+    {
+      "original_label": 0,
+      "encoded_label": 0
+    },
+    {
+      "original_label": 1,
+      "encoded_label": 1
+    }
+  ],
+  "column_name_mapping": [
+    {
+      "original": "mean radius",
+      "standardized": "mean_radius"
+    },
+    {
+      "original": "mean texture",
+      "standardized": "mean_texture"
+    },
+    {
+      "original": "mean perimeter",
+      "standardized": "mean_perimeter"
+    },
+    {
+      "original": "mean area",
+      "standardized": "mean_area"
+    },
+    {
+      "original": "mean smoothness",
+      "standardized": "mean_smoothness"
+    },
+    {
+      "original": "mean compactness",
+      "standardized": "mean_compactness"
+    },
+    {
+      "original": "mean concavity",
+      "standardized": "mean_concavity"
+    },
+    {
+      "original": "mean concave points",
+      "standardized": "mean_concave_points"
+    },
+    {
+      "original": "mean symmetry",
+      "standardized": "mean_symmetry"
+    },
+    {
+      "original": "mean fractal dimension",
+      "standardized": "mean_fractal_dimension"
+    },
+    {
+      "original": "radius error",
+      "standardized": "radius_error"
+    },
+    {
+      "original": "texture error",
+      "standardized": "texture_error"
+    },
+    {
+      "original": "perimeter error",
+      "standardized": "perimeter_error"
+    },
+    {
+      "original": "area error",
+      "standardized": "area_error"
+    },
+    {
+      "original": "smoothness error",
+      "standardized": "smoothness_error"
+    },
+    {
+      "original": "compactness error",
+      "standardized": "compactness_error"
+    },
+    {
+      "original": "concavity error",
+      "standardized": "concavity_error"
+    },
+    {
+      "original": "concave points error",
+      "standardized": "concave_points_error"
+    },
+    {
+      "original": "symmetry error",
+      "standardized": "symmetry_error"
+    },
+    {
+      "original": "fractal dimension error",
+      "standardized": "fractal_dimension_error"
+    },
+    {
+      "original": "worst radius",
+      "standardized": "worst_radius"
+    },
+    {
+      "original": "worst texture",
+      "standardized": "worst_texture"
+    },
+    {
+      "original": "worst perimeter",
+      "standardized": "worst_perimeter"
+    },
+    {
+      "original": "worst area",
+      "standardized": "worst_area"
+    },
+    {
+      "original": "worst smoothness",
+      "standardized": "worst_smoothness"
+    },
+    {
+      "original": "worst compactness",
+      "standardized": "worst_compactness"
+    },
+    {
+      "original": "worst concavity",
+      "standardized": "worst_concavity"
+    },
+    {
+      "original": "worst concave points",
+      "standardized": "worst_concave_points"
+    },
+    {
+      "original": "worst symmetry",
+      "standardized": "worst_symmetry"
+    },
+    {
+      "original": "worst fractal dimension",
+      "standardized": "worst_fractal_dimension"
+    },
+    {
+      "original": "target",
+      "standardized": "target"
+    }
+  ],
+  "num_rows_raw": 569,
+  "num_rows_processed": 569,
+  "num_features_raw": 30,
+  "num_features_processed": 30,
+  "feature_names": [
+    "mean_radius",
+    "mean_texture",
+    "mean_perimeter",
+    "mean_area",
+    "mean_smoothness",
+    "mean_compactness",
+    "mean_concavity",
+    "mean_concave_points",
+    "mean_symmetry",
+    "mean_fractal_dimension",
+    "radius_error",
+    "texture_error",
+    "perimeter_error",
+    "area_error",
+    "smoothness_error",
+    "compactness_error",
+    "concavity_error",
+    "concave_points_error",
+    "symmetry_error",
+    "fractal_dimension_error",
+    "worst_radius",
+    "worst_texture",
+    "worst_perimeter",
+    "worst_area",
+    "worst_smoothness",
+    "worst_compactness",
+    "worst_concavity",
+    "worst_concave_points",
+    "worst_symmetry",
+    "worst_fractal_dimension"
+  ],
+  "numeric_features": [
+    "mean_radius",
+    "mean_texture",
+    "mean_perimeter",
+    "mean_area",
+    "mean_smoothness",
+    "mean_compactness",
+    "mean_concavity",
+    "mean_concave_points",
+    "mean_symmetry",
+    "mean_fractal_dimension",
+    "radius_error",
+    "texture_error",
+    "perimeter_error",
+    "area_error",
+    "smoothness_error",
+    "compactness_error",
+    "concavity_error",
+    "concave_points_error",
+    "symmetry_error",
+    "fractal_dimension_error",
+    "worst_radius",
+    "worst_texture",
+    "worst_perimeter",
+    "worst_area",
+    "worst_smoothness",
+    "worst_compactness",
+    "worst_concavity",
+    "worst_concave_points",
+    "worst_symmetry",
+    "worst_fractal_dimension"
+  ],
+  "categorical_features": [],
+  "binary_indicator_features": [],
+  "removed_zero_variance_features": [],
+  "removed_duplicate_features": [],
+  "rows_removed_missing_target": 0,
+  "infinite_values_replaced": 0,
+  "missing_predictor_values_total": 0
+}

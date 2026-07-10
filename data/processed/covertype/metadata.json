@@ -1,0 +1,435 @@
+{
+  "preparation_version": "1.0",
+  "dataset_key": "covertype",
+  "dataset_name": "Covertype",
+  "domain": "forestry",
+  "task": "multiclass",
+  "size": "large",
+  "source_file": "data/raw/covertype/data.csv",
+  "source_sha256": "bb5a8fb603060160f64640da507502d7d3ea0c160d687b4d03dcfb6e5bd5d888",
+  "processed_file": "data/processed/covertype/data.csv",
+  "processed_sha256": "05ac384ec74f894a545918182c931d5e5337fbc8afe7cd2c9764df5aa24c0aed",
+  "original_target_column": "target",
+  "standardized_original_target_column": "target",
+  "target_column": "target",
+  "target_mapping": [
+    {
+      "original_label": 1,
+      "encoded_label": 0
+    },
+    {
+      "original_label": 2,
+      "encoded_label": 1
+    },
+    {
+      "original_label": 3,
+      "encoded_label": 2
+    },
+    {
+      "original_label": 4,
+      "encoded_label": 3
+    },
+    {
+      "original_label": 5,
+      "encoded_label": 4
+    },
+    {
+      "original_label": 6,
+      "encoded_label": 5
+    },
+    {
+      "original_label": 7,
+      "encoded_label": 6
+    }
+  ],
+  "column_name_mapping": [
+    {
+      "original": "Elevation",
+      "standardized": "elevation"
+    },
+    {
+      "original": "Aspect",
+      "standardized": "aspect"
+    },
+    {
+      "original": "Slope",
+      "standardized": "slope"
+    },
+    {
+      "original": "Horizontal_Distance_To_Hydrology",
+      "standardized": "horizontal_distance_to_hydrology"
+    },
+    {
+      "original": "Vertical_Distance_To_Hydrology",
+      "standardized": "vertical_distance_to_hydrology"
+    },
+    {
+      "original": "Horizontal_Distance_To_Roadways",
+      "standardized": "horizontal_distance_to_roadways"
+    },
+    {
+      "original": "Hillshade_9am",
+      "standardized": "hillshade_9am"
+    },
+    {
+      "original": "Hillshade_Noon",
+      "standardized": "hillshade_noon"
+    },
+    {
+      "original": "Hillshade_3pm",
+      "standardized": "hillshade_3pm"
+    },
+    {
+      "original": "Horizontal_Distance_To_Fire_Points",
+      "standardized": "horizontal_distance_to_fire_points"
+    },
+    {
+      "original": "Wilderness_Area_0",
+      "standardized": "wilderness_area_0"
+    },
+    {
+      "original": "Wilderness_Area_1",
+      "standardized": "wilderness_area_1"
+    },
+    {
+      "original": "Wilderness_Area_2",
+      "standardized": "wilderness_area_2"
+    },
+    {
+      "original": "Wilderness_Area_3",
+      "standardized": "wilderness_area_3"
+    },
+    {
+      "original": "Soil_Type_0",
+      "standardized": "soil_type_0"
+    },
+    {
+      "original": "Soil_Type_1",
+      "standardized": "soil_type_1"
+    },
+    {
+      "original": "Soil_Type_2",
+      "standardized": "soil_type_2"
+    },
+    {
+      "original": "Soil_Type_3",
+      "standardized": "soil_type_3"
+    },
+    {
+      "original": "Soil_Type_4",
+      "standardized": "soil_type_4"
+    },
+    {
+      "original": "Soil_Type_5",
+      "standardized": "soil_type_5"
+    },
+    {
+      "original": "Soil_Type_6",
+      "standardized": "soil_type_6"
+    },
+    {
+      "original": "Soil_Type_7",
+      "standardized": "soil_type_7"
+    },
+    {
+      "original": "Soil_Type_8",
+      "standardized": "soil_type_8"
+    },
+    {
+      "original": "Soil_Type_9",
+      "standardized": "soil_type_9"
+    },
+    {
+      "original": "Soil_Type_10",
+      "standardized": "soil_type_10"
+    },
+    {
+      "original": "Soil_Type_11",
+      "standardized": "soil_type_11"
+    },
+    {
+      "original": "Soil_Type_12",
+      "standardized": "soil_type_12"
+    },
+    {
+      "original": "Soil_Type_13",
+      "standardized": "soil_type_13"
+    },
+    {
+      "original": "Soil_Type_14",
+      "standardized": "soil_type_14"
+    },
+    {
+      "original": "Soil_Type_15",
+      "standardized": "soil_type_15"
+    },
+    {
+      "original": "Soil_Type_16",
+      "standardized": "soil_type_16"
+    },
+    {
+      "original": "Soil_Type_17",
+      "standardized": "soil_type_17"
+    },
+    {
+      "original": "Soil_Type_18",
+      "standardized": "soil_type_18"
+    },
+    {
+      "original": "Soil_Type_19",
+      "standardized": "soil_type_19"
+    },
+    {
+      "original": "Soil_Type_20",
+      "standardized": "soil_type_20"
+    },
+    {
+      "original": "Soil_Type_21",
+      "standardized": "soil_type_21"
+    },
+    {
+      "original": "Soil_Type_22",
+      "standardized": "soil_type_22"
+    },
+    {
+      "original": "Soil_Type_23",
+      "standardized": "soil_type_23"
+    },
+    {
+      "original": "Soil_Type_24",
+      "standardized": "soil_type_24"
+    },
+    {
+      "original": "Soil_Type_25",
+      "standardized": "soil_type_25"
+    },
+    {
+      "original": "Soil_Type_26",
+      "standardized": "soil_type_26"
+    },
+    {
+      "original": "Soil_Type_27",
+      "standardized": "soil_type_27"
+    },
+    {
+      "original": "Soil_Type_28",
+      "standardized": "soil_type_28"
+    },
+    {
+      "original": "Soil_Type_29",
+      "standardized": "soil_type_29"
+    },
+    {
+      "original": "Soil_Type_30",
+      "standardized": "soil_type_30"
+    },
+    {
+      "original": "Soil_Type_31",
+      "standardized": "soil_type_31"
+    },
+    {
+      "original": "Soil_Type_32",
+      "standardized": "soil_type_32"
+    },
+    {
+      "original": "Soil_Type_33",
+      "standardized": "soil_type_33"
+    },
+    {
+      "original": "Soil_Type_34",
+      "standardized": "soil_type_34"
+    },
+    {
+      "original": "Soil_Type_35",
+      "standardized": "soil_type_35"
+    },
+    {
+      "original": "Soil_Type_36",
+      "standardized": "soil_type_36"
+    },
+    {
+      "original": "Soil_Type_37",
+      "standardized": "soil_type_37"
+    },
+    {
+      "original": "Soil_Type_38",
+      "standardized": "soil_type_38"
+    },
+    {
+      "original": "Soil_Type_39",
+      "standardized": "soil_type_39"
+    },
+    {
+      "original": "target",
+      "standardized": "target"
+    }
+  ],
+  "num_rows_raw": 581012,
+  "num_rows_processed": 581012,
+  "num_features_raw": 54,
+  "num_features_processed": 54,
+  "feature_names": [
+    "elevation",
+    "aspect",
+    "slope",
+    "horizontal_distance_to_hydrology",
+    "vertical_distance_to_hydrology",
+    "horizontal_distance_to_roadways",
+    "hillshade_9am",
+    "hillshade_noon",
+    "hillshade_3pm",
+    "horizontal_distance_to_fire_points",
+    "wilderness_area_0",
+    "wilderness_area_1",
+    "wilderness_area_2",
+    "wilderness_area_3",
+    "soil_type_0",
+    "soil_type_1",
+    "soil_type_2",
+    "soil_type_3",
+    "soil_type_4",
+    "soil_type_5",
+    "soil_type_6",
+    "soil_type_7",
+    "soil_type_8",
+    "soil_type_9",
+    "soil_type_10",
+    "soil_type_11",
+    "soil_type_12",
+    "soil_type_13",
+    "soil_type_14",
+    "soil_type_15",
+    "soil_type_16",
+    "soil_type_17",
+    "soil_type_18",
+    "soil_type_19",
+    "soil_type_20",
+    "soil_type_21",
+    "soil_type_22",
+    "soil_type_23",
+    "soil_type_24",
+    "soil_type_25",
+    "soil_type_26",
+    "soil_type_27",
+    "soil_type_28",
+    "soil_type_29",
+    "soil_type_30",
+    "soil_type_31",
+    "soil_type_32",
+    "soil_type_33",
+    "soil_type_34",
+    "soil_type_35",
+    "soil_type_36",
+    "soil_type_37",
+    "soil_type_38",
+    "soil_type_39"
+  ],
+  "numeric_features": [
+    "elevation",
+    "aspect",
+    "slope",
+    "horizontal_distance_to_hydrology",
+    "vertical_distance_to_hydrology",
+    "horizontal_distance_to_roadways",
+    "hillshade_9am",
+    "hillshade_noon",
+    "hillshade_3pm",
+    "horizontal_distance_to_fire_points",
+    "wilderness_area_0",
+    "wilderness_area_1",
+    "wilderness_area_2",
+    "wilderness_area_3",
+    "soil_type_0",
+    "soil_type_1",
+    "soil_type_2",
+    "soil_type_3",
+    "soil_type_4",
+    "soil_type_5",
+    "soil_type_6",
+    "soil_type_7",
+    "soil_type_8",
+    "soil_type_9",
+    "soil_type_10",
+    "soil_type_11",
+    "soil_type_12",
+    "soil_type_13",
+    "soil_type_14",
+    "soil_type_15",
+    "soil_type_16",
+    "soil_type_17",
+    "soil_type_18",
+    "soil_type_19",
+    "soil_type_20",
+    "soil_type_21",
+    "soil_type_22",
+    "soil_type_23",
+    "soil_type_24",
+    "soil_type_25",
+    "soil_type_26",
+    "soil_type_27",
+    "soil_type_28",
+    "soil_type_29",
+    "soil_type_30",
+    "soil_type_31",
+    "soil_type_32",
+    "soil_type_33",
+    "soil_type_34",
+    "soil_type_35",
+    "soil_type_36",
+    "soil_type_37",
+    "soil_type_38",
+    "soil_type_39"
+  ],
+  "categorical_features": [],
+  "binary_indicator_features": [
+    "wilderness_area_0",
+    "wilderness_area_1",
+    "wilderness_area_2",
+    "wilderness_area_3",
+    "soil_type_0",
+    "soil_type_1",
+    "soil_type_2",
+    "soil_type_3",
+    "soil_type_4",
+    "soil_type_5",
+    "soil_type_6",
+    "soil_type_7",
+    "soil_type_8",
+    "soil_type_9",
+    "soil_type_10",
+    "soil_type_11",
+    "soil_type_12",
+    "soil_type_13",
+    "soil_type_14",
+    "soil_type_15",
+    "soil_type_16",
+    "soil_type_17",
+    "soil_type_18",
+    "soil_type_19",
+    "soil_type_20",
+    "soil_type_21",
+    "soil_type_22",
+    "soil_type_23",
+    "soil_type_24",
+    "soil_type_25",
+    "soil_type_26",
+    "soil_type_27",
+    "soil_type_28",
+    "soil_type_29",
+    "soil_type_30",
+    "soil_type_31",
+    "soil_type_32",
+    "soil_type_33",
+    "soil_type_34",
+    "soil_type_35",
+    "soil_type_36",
+    "soil_type_37",
+    "soil_type_38",
+    "soil_type_39"
+  ],
+  "removed_zero_variance_features": [],
+  "removed_duplicate_features": [],
+  "rows_removed_missing_target": 0,
+  "infinite_values_replaced": 0,
+  "missing_predictor_values_total": 0
+}

@@ -1,0 +1,226 @@
+{
+  "preparation_version": "1.0",
+  "dataset_key": "credit_card_fraud",
+  "dataset_name": "Credit Card Fraud",
+  "domain": "finance",
+  "task": "binary",
+  "size": "large",
+  "source_file": "data/raw/credit_card_fraud/data.csv",
+  "source_sha256": "61171795e96ec102e4876a6809da8181dffd6d0d80a3fcce14d86a75643698e5",
+  "processed_file": "data/processed/credit_card_fraud/data.csv",
+  "processed_sha256": "d09f0e8e18cfdd20f1f69b4a7ef5b6f5e3f72323389d1f480556a8b0230cb1e9",
+  "original_target_column": "Class",
+  "standardized_original_target_column": "class",
+  "target_column": "target",
+  "target_mapping": [
+    {
+      "original_label": 0,
+      "encoded_label": 0
+    },
+    {
+      "original_label": 1,
+      "encoded_label": 1
+    }
+  ],
+  "column_name_mapping": [
+    {
+      "original": "Time",
+      "standardized": "time"
+    },
+    {
+      "original": "V1",
+      "standardized": "v1"
+    },
+    {
+      "original": "V2",
+      "standardized": "v2"
+    },
+    {
+      "original": "V3",
+      "standardized": "v3"
+    },
+    {
+      "original": "V4",
+      "standardized": "v4"
+    },
+    {
+      "original": "V5",
+      "standardized": "v5"
+    },
+    {
+      "original": "V6",
+      "standardized": "v6"
+    },
+    {
+      "original": "V7",
+      "standardized": "v7"
+    },
+    {
+      "original": "V8",
+      "standardized": "v8"
+    },
+    {
+      "original": "V9",
+      "standardized": "v9"
+    },
+    {
+      "original": "V10",
+      "standardized": "v10"
+    },
+    {
+      "original": "V11",
+      "standardized": "v11"
+    },
+    {
+      "original": "V12",
+      "standardized": "v12"
+    },
+    {
+      "original": "V13",
+      "standardized": "v13"
+    },
+    {
+      "original": "V14",
+      "standardized": "v14"
+    },
+    {
+      "original": "V15",
+      "standardized": "v15"
+    },
+    {
+      "original": "V16",
+      "standardized": "v16"
+    },
+    {
+      "original": "V17",
+      "standardized": "v17"
+    },
+    {
+      "original": "V18",
+      "standardized": "v18"
+    },
+    {
+      "original": "V19",
+      "standardized": "v19"
+    },
+    {
+      "original": "V20",
+      "standardized": "v20"
+    },
+    {
+      "original": "V21",
+      "standardized": "v21"
+    },
+    {
+      "original": "V22",
+      "standardized": "v22"
+    },
+    {
+      "original": "V23",
+      "standardized": "v23"
+    },
+    {
+      "original": "V24",
+      "standardized": "v24"
+    },
+    {
+      "original": "V25",
+      "standardized": "v25"
+    },
+    {
+      "original": "V26",
+      "standardized": "v26"
+    },
+    {
+      "original": "V27",
+      "standardized": "v27"
+    },
+    {
+      "original": "V28",
+      "standardized": "v28"
+    },
+    {
+      "original": "Amount",
+      "standardized": "amount"
+    },
+    {
+      "original": "Class",
+      "standardized": "class"
+    }
+  ],
+  "num_rows_raw": 284807,
+  "num_rows_processed": 284807,
+  "num_features_raw": 30,
+  "num_features_processed": 30,
+  "feature_names": [
+    "time",
+    "v1",
+    "v2",
+    "v3",
+    "v4",
+    "v5",
+    "v6",
+    "v7",
+    "v8",
+    "v9",
+    "v10",
+    "v11",
+    "v12",
+    "v13",
+    "v14",
+    "v15",
+    "v16",
+    "v17",
+    "v18",
+    "v19",
+    "v20",
+    "v21",
+    "v22",
+    "v23",
+    "v24",
+    "v25",
+    "v26",
+    "v27",
+    "v28",
+    "amount"
+  ],
+  "numeric_features": [
+    "time",
+    "v1",
+    "v2",
+    "v3",
+    "v4",
+    "v5",
+    "v6",
+    "v7",
+    "v8",
+    "v9",
+    "v10",
+    "v11",
+    "v12",
+    "v13",
+    "v14",
+    "v15",
+    "v16",
+    "v17",
+    "v18",
+    "v19",
+    "v20",
+    "v21",
+    "v22",
+    "v23",
+    "v24",
+    "v25",
+    "v26",
+    "v27",
+    "v28",
+    "amount"
+  ],
+  "categorical_features": [],
+  "binary_indicator_features": [],
+  "removed_zero_variance_features": [],
+  "removed_duplicate_features": [],
+  "rows_removed_missing_target": 0,
+  "infinite_values_replaced": 0,
+  "missing_predictor_values_total": 0
+}

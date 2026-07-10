@@ -1,0 +1,214 @@
+{
+  "preparation_version": "1.0",
+  "dataset_key": "higgs",
+  "dataset_name": "HIGGS",
+  "domain": "particle_physics",
+  "task": "binary",
+  "size": "very_large",
+  "source_file": "data/raw/higgs/data.csv",
+  "source_sha256": "9a7cf07203c2e348a261920a80179e42024b8c43cc6e39d4c42a7b0aa8114815",
+  "processed_file": "data/processed/higgs/data.csv",
+  "processed_sha256": "5eccfde73d83574a5ad60140c019766875b535fe4241f01bc8091e6426b431ac",
+  "original_target_column": "class",
+  "standardized_original_target_column": "class",
+  "target_column": "target",
+  "target_mapping": [
+    {
+      "original_label": 0.0,
+      "encoded_label": 0
+    },
+    {
+      "original_label": 1.0,
+      "encoded_label": 1
+    }
+  ],
+  "column_name_mapping": [
+    {
+      "original": "class",
+      "standardized": "class"
+    },
+    {
+      "original": "feature_1",
+      "standardized": "feature_1"
+    },
+    {
+      "original": "feature_2",
+      "standardized": "feature_2"
+    },
+    {
+      "original": "feature_3",
+      "standardized": "feature_3"
+    },
+    {
+      "original": "feature_4",
+      "standardized": "feature_4"
+    },
+    {
+      "original": "feature_5",
+      "standardized": "feature_5"
+    },
+    {
+      "original": "feature_6",
+      "standardized": "feature_6"
+    },
+    {
+      "original": "feature_7",
+      "standardized": "feature_7"
+    },
+    {
+      "original": "feature_8",
+      "standardized": "feature_8"
+    },
+    {
+      "original": "feature_9",
+      "standardized": "feature_9"
+    },
+    {
+      "original": "feature_10",
+      "standardized": "feature_10"
+    },
+    {
+      "original": "feature_11",
+      "standardized": "feature_11"
+    },
+    {
+      "original": "feature_12",
+      "standardized": "feature_12"
+    },
+    {
+      "original": "feature_13",
+      "standardized": "feature_13"
+    },
+    {
+      "original": "feature_14",
+      "standardized": "feature_14"
+    },
+    {
+      "original": "feature_15",
+      "standardized": "feature_15"
+    },
+    {
+      "original": "feature_16",
+      "standardized": "feature_16"
+    },
+    {
+      "original": "feature_17",
+      "standardized": "feature_17"
+    },
+    {
+      "original": "feature_18",
+      "standardized": "feature_18"
+    },
+    {
+      "original": "feature_19",
+      "standardized": "feature_19"
+    },
+    {
+      "original": "feature_20",
+      "standardized": "feature_20"
+    },
+    {
+      "original": "feature_21",
+      "standardized": "feature_21"
+    },
+    {
+      "original": "feature_22",
+      "standardized": "feature_22"
+    },
+    {
+      "original": "feature_23",
+      "standardized": "feature_23"
+    },
+    {
+      "original": "feature_24",
+      "standardized": "feature_24"
+    },
+    {
+      "original": "feature_25",
+      "standardized": "feature_25"
+    },
+    {
+      "original": "feature_26",
+      "standardized": "feature_26"
+    },
+    {
+      "original": "feature_27",
+      "standardized": "feature_27"
+    },
+    {
+      "original": "feature_28",
+      "standardized": "feature_28"
+    }
+  ],
+  "num_rows_raw": 11000000,
+  "num_rows_processed": 11000000,
+  "num_features_raw": 28,
+  "num_features_processed": 28,
+  "feature_names": [
+    "feature_1",
+    "feature_2",
+    "feature_3",
+    "feature_4",
+    "feature_5",
+    "feature_6",
+    "feature_7",
+    "feature_8",
+    "feature_9",
+    "feature_10",
+    "feature_11",
+    "feature_12",
+    "feature_13",
+    "feature_14",
+    "feature_15",
+    "feature_16",
+    "feature_17",
+    "feature_18",
+    "feature_19",
+    "feature_20",
+    "feature_21",
+    "feature_22",
+    "feature_23",
+    "feature_24",
+    "feature_25",
+    "feature_26",
+    "feature_27",
+    "feature_28"
+  ],
+  "numeric_features": [
+    "feature_1",
+    "feature_2",
+    "feature_3",
+    "feature_4",
+    "feature_5",
+    "feature_6",
+    "feature_7",
+    "feature_8",
+    "feature_9",
+    "feature_10",
+    "feature_11",
+    "feature_12",
+    "feature_13",
+    "feature_14",
+    "feature_15",
+    "feature_16",
+    "feature_17",
+    "feature_18",
+    "feature_19",
+    "feature_20",
+    "feature_21",
+    "feature_22",
+    "feature_23",
+    "feature_24",
+    "feature_25",
+    "feature_26",
+    "feature_27",
+    "feature_28"
+  ],
+  "categorical_features": [],
+  "binary_indicator_features": [],
+  "removed_zero_variance_features": [],
+  "removed_duplicate_features": [],
+  "rows_removed_missing_target": 0,
+  "infinite_values_replaced": 0,
+  "missing_predictor_values_total": 0
+}

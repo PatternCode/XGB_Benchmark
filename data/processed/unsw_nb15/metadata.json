@@ -1,0 +1,294 @@
+{
+  "preparation_version": "1.0",
+  "dataset_key": "unsw_nb15",
+  "dataset_name": "UNSW-NB15",
+  "domain": "cybersecurity",
+  "task": "multiclass",
+  "size": "large",
+  "source_file": "data/raw/unsw_nb15/data.csv",
+  "source_sha256": "4b1be0114cd710abf5a010b54cec47577cc38e2dd443013871c0d3548c703e94",
+  "processed_file": "data/processed/unsw_nb15/data.csv",
+  "processed_sha256": "e51c7ad4ee1d74d77c41f9bcad6f49594822b5b413895bd7e226dbb68617e4aa",
+  "original_target_column": "attack",
+  "standardized_original_target_column": "attack",
+  "target_column": "target",
+  "target_mapping": [
+    {
+      "original_label": "Backdoor",
+      "encoded_label": 0
+    },
+    {
+      "original_label": "DoS",
+      "encoded_label": 1
+    },
+    {
+      "original_label": "Generic",
+      "encoded_label": 2
+    },
+    {
+      "original_label": "Probe",
+      "encoded_label": 3
+    },
+    {
+      "original_label": "Worm",
+      "encoded_label": 4
+    }
+  ],
+  "column_name_mapping": [
+    {
+      "original": "dur",
+      "standardized": "dur"
+    },
+    {
+      "original": "spkts",
+      "standardized": "spkts"
+    },
+    {
+      "original": "dpkts",
+      "standardized": "dpkts"
+    },
+    {
+      "original": "sbytes",
+      "standardized": "sbytes"
+    },
+    {
+      "original": "dbytes",
+      "standardized": "dbytes"
+    },
+    {
+      "original": "rate",
+      "standardized": "rate"
+    },
+    {
+      "original": "sttl",
+      "standardized": "sttl"
+    },
+    {
+      "original": "dttl",
+      "standardized": "dttl"
+    },
+    {
+      "original": "sload",
+      "standardized": "sload"
+    },
+    {
+      "original": "dload",
+      "standardized": "dload"
+    },
+    {
+      "original": "sloss",
+      "standardized": "sloss"
+    },
+    {
+      "original": "dloss",
+      "standardized": "dloss"
+    },
+    {
+      "original": "sinpkt",
+      "standardized": "sinpkt"
+    },
+    {
+      "original": "dinpkt",
+      "standardized": "dinpkt"
+    },
+    {
+      "original": "sjit",
+      "standardized": "sjit"
+    },
+    {
+      "original": "djit",
+      "standardized": "djit"
+    },
+    {
+      "original": "swin",
+      "standardized": "swin"
+    },
+    {
+      "original": "stcpb",
+      "standardized": "stcpb"
+    },
+    {
+      "original": "dtcpb",
+      "standardized": "dtcpb"
+    },
+    {
+      "original": "dwin",
+      "standardized": "dwin"
+    },
+    {
+      "original": "tcprtt",
+      "standardized": "tcprtt"
+    },
+    {
+      "original": "synack",
+      "standardized": "synack"
+    },
+    {
+      "original": "ackdat",
+      "standardized": "ackdat"
+    },
+    {
+      "original": "smean",
+      "standardized": "smean"
+    },
+    {
+      "original": "dmean",
+      "standardized": "dmean"
+    },
+    {
+      "original": "trans_depth",
+      "standardized": "trans_depth"
+    },
+    {
+      "original": "response_body_len",
+      "standardized": "response_body_len"
+    },
+    {
+      "original": "ct_srv_src",
+      "standardized": "ct_srv_src"
+    },
+    {
+      "original": "ct_state_ttl",
+      "standardized": "ct_state_ttl"
+    },
+    {
+      "original": "ct_dst_ltm",
+      "standardized": "ct_dst_ltm"
+    },
+    {
+      "original": "ct_src_dport_ltm",
+      "standardized": "ct_src_dport_ltm"
+    },
+    {
+      "original": "ct_dst_sport_ltm",
+      "standardized": "ct_dst_sport_ltm"
+    },
+    {
+      "original": "ct_dst_src_ltm",
+      "standardized": "ct_dst_src_ltm"
+    },
+    {
+      "original": "is_ftp_login",
+      "standardized": "is_ftp_login"
+    },
+    {
+      "original": "ct_ftp_cmd",
+      "standardized": "ct_ftp_cmd"
+    },
+    {
+      "original": "ct_flw_http_mthd",
+      "standardized": "ct_flw_http_mthd"
+    },
+    {
+      "original": "ct_src_ltm",
+      "standardized": "ct_src_ltm"
+    },
+    {
+      "original": "ct_srv_dst",
+      "standardized": "ct_srv_dst"
+    },
+    {
+      "original": "is_sm_ips_ports",
+      "standardized": "is_sm_ips_ports"
+    },
+    {
+      "original": "attack",
+      "standardized": "attack"
+    }
+  ],
+  "num_rows_raw": 340693,
+  "num_rows_processed": 340693,
+  "num_features_raw": 39,
+  "num_features_processed": 39,
+  "feature_names": [
+    "dur",
+    "spkts",
+    "dpkts",
+    "sbytes",
+    "dbytes",
+    "rate",
+    "sttl",
+    "dttl",
+    "sload",
+    "dload",
+    "sloss",
+    "dloss",
+    "sinpkt",
+    "dinpkt",
+    "sjit",
+    "djit",
+    "swin",
+    "stcpb",
+    "dtcpb",
+    "dwin",
+    "tcprtt",
+    "synack",
+    "ackdat",
+    "smean",
+    "dmean",
+    "trans_depth",
+    "response_body_len",
+    "ct_srv_src",
+    "ct_state_ttl",
+    "ct_dst_ltm",
+    "ct_src_dport_ltm",
+    "ct_dst_sport_ltm",
+    "ct_dst_src_ltm",
+    "is_ftp_login",
+    "ct_ftp_cmd",
+    "ct_flw_http_mthd",
+    "ct_src_ltm",
+    "ct_srv_dst",
+    "is_sm_ips_ports"
+  ],
+  "numeric_features": [
+    "dur",
+    "spkts",
+    "dpkts",
+    "sbytes",
+    "dbytes",
+    "rate",
+    "sttl",
+    "dttl",
+    "sload",
+    "dload",
+    "sloss",
+    "dloss",
+    "sinpkt",
+    "dinpkt",
+    "sjit",
+    "djit",
+    "swin",
+    "stcpb",
+    "dtcpb",
+    "dwin",
+    "tcprtt",
+    "synack",
+    "ackdat",
+    "smean",
+    "dmean",
+    "trans_depth",
+    "response_body_len",
+    "ct_srv_src",
+    "ct_state_ttl",
+    "ct_dst_ltm",
+    "ct_src_dport_ltm",
+    "ct_dst_sport_ltm",
+    "ct_dst_src_ltm",
+    "is_ftp_login",
+    "ct_ftp_cmd",
+    "ct_flw_http_mthd",
+    "ct_src_ltm",
+    "ct_srv_dst",
+    "is_sm_ips_ports"
+  ],
+  "categorical_features": [],
+  "binary_indicator_features": [
+    "is_sm_ips_ports"
+  ],
+  "removed_zero_variance_features": [],
+  "removed_duplicate_features": [],
+  "rows_removed_missing_target": 0,
+  "infinite_values_replaced": 0,
+  "missing_predictor_values_total": 0
+}

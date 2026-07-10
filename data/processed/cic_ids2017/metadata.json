@@ -1,0 +1,589 @@
+{
+  "preparation_version": "1.0",
+  "dataset_key": "cic_ids2017",
+  "dataset_name": "CIC-IDS2017",
+  "domain": "cybersecurity",
+  "task": "multiclass",
+  "size": "very_large",
+  "source_file": "data/raw/cic_ids2017/data.csv",
+  "source_sha256": "642b251fd41f120cd1d8f9e25e348ed6d272ba468f061f03aeba1c9d4ce7e1ef",
+  "processed_file": "data/processed/cic_ids2017/data.csv",
+  "processed_sha256": "d25b7fa3392013a7b16dec6198baf1bb1d3044da42a259a2a15d6d7864df7d1f",
+  "original_target_column": "Label",
+  "standardized_original_target_column": "label",
+  "target_column": "target",
+  "target_mapping": [
+    {
+      "original_label": "BENIGN",
+      "encoded_label": 0
+    },
+    {
+      "original_label": "Bot",
+      "encoded_label": 1
+    },
+    {
+      "original_label": "DDoS",
+      "encoded_label": 2
+    },
+    {
+      "original_label": "DoS GoldenEye",
+      "encoded_label": 3
+    },
+    {
+      "original_label": "DoS Hulk",
+      "encoded_label": 4
+    },
+    {
+      "original_label": "DoS Slowhttptest",
+      "encoded_label": 5
+    },
+    {
+      "original_label": "DoS slowloris",
+      "encoded_label": 6
+    },
+    {
+      "original_label": "FTP-Patator",
+      "encoded_label": 7
+    },
+    {
+      "original_label": "Heartbleed",
+      "encoded_label": 8
+    },
+    {
+      "original_label": "Infiltration",
+      "encoded_label": 9
+    },
+    {
+      "original_label": "PortScan",
+      "encoded_label": 10
+    },
+    {
+      "original_label": "SSH-Patator",
+      "encoded_label": 11
+    },
+    {
+      "original_label": "Web Attack - Brute Force",
+      "encoded_label": 12
+    },
+    {
+      "original_label": "Web Attack - Sql Injection",
+      "encoded_label": 13
+    },
+    {
+      "original_label": "Web Attack - XSS",
+      "encoded_label": 14
+    }
+  ],
+  "column_name_mapping": [
+    {
+      "original": " Destination Port",
+      "standardized": "destination_port"
+    },
+    {
+      "original": " Flow Duration",
+      "standardized": "flow_duration"
+    },
+    {
+      "original": " Total Fwd Packets",
+      "standardized": "total_fwd_packets"
+    },
+    {
+      "original": " Total Backward Packets",
+      "standardized": "total_backward_packets"
+    },
+    {
+      "original": "Total Length of Fwd Packets",
+      "standardized": "total_length_of_fwd_packets"
+    },
+    {
+      "original": " Total Length of Bwd Packets",
+      "standardized": "total_length_of_bwd_packets"
+    },
+    {
+      "original": " Fwd Packet Length Max",
+      "standardized": "fwd_packet_length_max"
+    },
+    {
+      "original": " Fwd Packet Length Min",
+      "standardized": "fwd_packet_length_min"
+    },
+    {
+      "original": " Fwd Packet Length Mean",
+      "standardized": "fwd_packet_length_mean"
+    },
+    {
+      "original": " Fwd Packet Length Std",
+      "standardized": "fwd_packet_length_std"
+    },
+    {
+      "original": "Bwd Packet Length Max",
+      "standardized": "bwd_packet_length_max"
+    },
+    {
+      "original": " Bwd Packet Length Min",
+      "standardized": "bwd_packet_length_min"
+    },
+    {
+      "original": " Bwd Packet Length Mean",
+      "standardized": "bwd_packet_length_mean"
+    },
+    {
+      "original": " Bwd Packet Length Std",
+      "standardized": "bwd_packet_length_std"
+    },
+    {
+      "original": "Flow Bytes/s",
+      "standardized": "flow_bytes_s"
+    },
+    {
+      "original": " Flow Packets/s",
+      "standardized": "flow_packets_s"
+    },
+    {
+      "original": " Flow IAT Mean",
+      "standardized": "flow_iat_mean"
+    },
+    {
+      "original": " Flow IAT Std",
+      "standardized": "flow_iat_std"
+    },
+    {
+      "original": " Flow IAT Max",
+      "standardized": "flow_iat_max"
+    },
+    {
+      "original": " Flow IAT Min",
+      "standardized": "flow_iat_min"
+    },
+    {
+      "original": "Fwd IAT Total",
+      "standardized": "fwd_iat_total"
+    },
+    {
+      "original": " Fwd IAT Mean",
+      "standardized": "fwd_iat_mean"
+    },
+    {
+      "original": " Fwd IAT Std",
+      "standardized": "fwd_iat_std"
+    },
+    {
+      "original": " Fwd IAT Max",
+      "standardized": "fwd_iat_max"
+    },
+    {
+      "original": " Fwd IAT Min",
+      "standardized": "fwd_iat_min"
+    },
+    {
+      "original": "Bwd IAT Total",
+      "standardized": "bwd_iat_total"
+    },
+    {
+      "original": " Bwd IAT Mean",
+      "standardized": "bwd_iat_mean"
+    },
+    {
+      "original": " Bwd IAT Std",
+      "standardized": "bwd_iat_std"
+    },
+    {
+      "original": " Bwd IAT Max",
+      "standardized": "bwd_iat_max"
+    },
+    {
+      "original": " Bwd IAT Min",
+      "standardized": "bwd_iat_min"
+    },
+    {
+      "original": "Fwd PSH Flags",
+      "standardized": "fwd_psh_flags"
+    },
+    {
+      "original": " Bwd PSH Flags",
+      "standardized": "bwd_psh_flags"
+    },
+    {
+      "original": " Fwd URG Flags",
+      "standardized": "fwd_urg_flags"
+    },
+    {
+      "original": " Bwd URG Flags",
+      "standardized": "bwd_urg_flags"
+    },
+    {
+      "original": " Fwd Header Length",
+      "standardized": "fwd_header_length"
+    },
+    {
+      "original": " Bwd Header Length",
+      "standardized": "bwd_header_length"
+    },
+    {
+      "original": "Fwd Packets/s",
+      "standardized": "fwd_packets_s"
+    },
+    {
+      "original": " Bwd Packets/s",
+      "standardized": "bwd_packets_s"
+    },
+    {
+      "original": " Min Packet Length",
+      "standardized": "min_packet_length"
+    },
+    {
+      "original": " Max Packet Length",
+      "standardized": "max_packet_length"
+    },
+    {
+      "original": " Packet Length Mean",
+      "standardized": "packet_length_mean"
+    },
+    {
+      "original": " Packet Length Std",
+      "standardized": "packet_length_std"
+    },
+    {
+      "original": " Packet Length Variance",
+      "standardized": "packet_length_variance"
+    },
+    {
+      "original": "FIN Flag Count",
+      "standardized": "fin_flag_count"
+    },
+    {
+      "original": " SYN Flag Count",
+      "standardized": "syn_flag_count"
+    },
+    {
+      "original": " RST Flag Count",
+      "standardized": "rst_flag_count"
+    },
+    {
+      "original": " PSH Flag Count",
+      "standardized": "psh_flag_count"
+    },
+    {
+      "original": " ACK Flag Count",
+      "standardized": "ack_flag_count"
+    },
+    {
+      "original": " URG Flag Count",
+      "standardized": "urg_flag_count"
+    },
+    {
+      "original": " CWE Flag Count",
+      "standardized": "cwe_flag_count"
+    },
+    {
+      "original": " ECE Flag Count",
+      "standardized": "ece_flag_count"
+    },
+    {
+      "original": " Down/Up Ratio",
+      "standardized": "down_up_ratio"
+    },
+    {
+      "original": " Average Packet Size",
+      "standardized": "average_packet_size"
+    },
+    {
+      "original": " Avg Fwd Segment Size",
+      "standardized": "avg_fwd_segment_size"
+    },
+    {
+      "original": " Avg Bwd Segment Size",
+      "standardized": "avg_bwd_segment_size"
+    },
+    {
+      "original": " Fwd Header Length.1",
+      "standardized": "fwd_header_length_1"
+    },
+    {
+      "original": "Fwd Avg Bytes/Bulk",
+      "standardized": "fwd_avg_bytes_bulk"
+    },
+    {
+      "original": " Fwd Avg Packets/Bulk",
+      "standardized": "fwd_avg_packets_bulk"
+    },
+    {
+      "original": " Fwd Avg Bulk Rate",
+      "standardized": "fwd_avg_bulk_rate"
+    },
+    {
+      "original": " Bwd Avg Bytes/Bulk",
+      "standardized": "bwd_avg_bytes_bulk"
+    },
+    {
+      "original": " Bwd Avg Packets/Bulk",
+      "standardized": "bwd_avg_packets_bulk"
+    },
+    {
+      "original": "Bwd Avg Bulk Rate",
+      "standardized": "bwd_avg_bulk_rate"
+    },
+    {
+      "original": "Subflow Fwd Packets",
+      "standardized": "subflow_fwd_packets"
+    },
+    {
+      "original": " Subflow Fwd Bytes",
+      "standardized": "subflow_fwd_bytes"
+    },
+    {
+      "original": " Subflow Bwd Packets",
+      "standardized": "subflow_bwd_packets"
+    },
+    {
+      "original": " Subflow Bwd Bytes",
+      "standardized": "subflow_bwd_bytes"
+    },
+    {
+      "original": "Init_Win_bytes_forward",
+      "standardized": "init_win_bytes_forward"
+    },
+    {
+      "original": " Init_Win_bytes_backward",
+      "standardized": "init_win_bytes_backward"
+    },
+    {
+      "original": " act_data_pkt_fwd",
+      "standardized": "act_data_pkt_fwd"
+    },
+    {
+      "original": " min_seg_size_forward",
+      "standardized": "min_seg_size_forward"
+    },
+    {
+      "original": "Active Mean",
+      "standardized": "active_mean"
+    },
+    {
+      "original": " Active Std",
+      "standardized": "active_std"
+    },
+    {
+      "original": " Active Max",
+      "standardized": "active_max"
+    },
+    {
+      "original": " Active Min",
+      "standardized": "active_min"
+    },
+    {
+      "original": "Idle Mean",
+      "standardized": "idle_mean"
+    },
+    {
+      "original": " Idle Std",
+      "standardized": "idle_std"
+    },
+    {
+      "original": " Idle Max",
+      "standardized": "idle_max"
+    },
+    {
+      "original": " Idle Min",
+      "standardized": "idle_min"
+    },
+    {
+      "original": " Label",
+      "standardized": "label"
+    }
+  ],
+  "num_rows_raw": 2830743,
+  "num_rows_processed": 2830743,
+  "num_features_raw": 78,
+  "num_features_processed": 65,
+  "feature_names": [
+    "destination_port",
+    "flow_duration",
+    "total_fwd_packets",
+    "total_backward_packets",
+    "total_length_of_fwd_packets",
+    "total_length_of_bwd_packets",
+    "fwd_packet_length_max",
+    "fwd_packet_length_min",
+    "fwd_packet_length_mean",
+    "fwd_packet_length_std",
+    "bwd_packet_length_max",
+    "bwd_packet_length_min",
+    "bwd_packet_length_mean",
+    "bwd_packet_length_std",
+    "flow_bytes_s",
+    "flow_packets_s",
+    "flow_iat_mean",
+    "flow_iat_std",
+    "flow_iat_max",
+    "flow_iat_min",
+    "fwd_iat_total",
+    "fwd_iat_mean",
+    "fwd_iat_std",
+    "fwd_iat_max",
+    "fwd_iat_min",
+    "bwd_iat_total",
+    "bwd_iat_mean",
+    "bwd_iat_std",
+    "bwd_iat_max",
+    "bwd_iat_min",
+    "fwd_psh_flags",
+    "fwd_urg_flags",
+    "fwd_header_length",
+    "bwd_header_length",
+    "fwd_packets_s",
+    "bwd_packets_s",
+    "min_packet_length",
+    "max_packet_length",
+    "packet_length_mean",
+    "packet_length_std",
+    "packet_length_variance",
+    "fin_flag_count",
+    "rst_flag_count",
+    "psh_flag_count",
+    "ack_flag_count",
+    "urg_flag_count",
+    "ece_flag_count",
+    "down_up_ratio",
+    "average_packet_size",
+    "avg_fwd_segment_size",
+    "avg_bwd_segment_size",
+    "subflow_fwd_bytes",
+    "subflow_bwd_bytes",
+    "init_win_bytes_forward",
+    "init_win_bytes_backward",
+    "act_data_pkt_fwd",
+    "min_seg_size_forward",
+    "active_mean",
+    "active_std",
+    "active_max",
+    "active_min",
+    "idle_mean",
+    "idle_std",
+    "idle_max",
+    "idle_min"
+  ],
+  "numeric_features": [
+    "destination_port",
+    "flow_duration",
+    "total_fwd_packets",
+    "total_backward_packets",
+    "total_length_of_fwd_packets",
+    "total_length_of_bwd_packets",
+    "fwd_packet_length_max",
+    "fwd_packet_length_min",
+    "fwd_packet_length_mean",
+    "fwd_packet_length_std",
+    "bwd_packet_length_max",
+    "bwd_packet_length_min",
+    "bwd_packet_length_mean",
+    "bwd_packet_length_std",
+    "flow_bytes_s",
+    "flow_packets_s",
+    "flow_iat_mean",
+    "flow_iat_std",
+    "flow_iat_max",
+    "flow_iat_min",
+    "fwd_iat_total",
+    "fwd_iat_mean",
+    "fwd_iat_std",
+    "fwd_iat_max",
+    "fwd_iat_min",
+    "bwd_iat_total",
+    "bwd_iat_mean",
+    "bwd_iat_std",
+    "bwd_iat_max",
+    "bwd_iat_min",
+    "fwd_psh_flags",
+    "fwd_urg_flags",
+    "fwd_header_length",
+    "bwd_header_length",
+    "fwd_packets_s",
+    "bwd_packets_s",
+    "min_packet_length",
+    "max_packet_length",
+    "packet_length_mean",
+    "packet_length_std",
+    "packet_length_variance",
+    "fin_flag_count",
+    "rst_flag_count",
+    "psh_flag_count",
+    "ack_flag_count",
+    "urg_flag_count",
+    "ece_flag_count",
+    "down_up_ratio",
+    "average_packet_size",
+    "avg_fwd_segment_size",
+    "avg_bwd_segment_size",
+    "subflow_fwd_bytes",
+    "subflow_bwd_bytes",
+    "init_win_bytes_forward",
+    "init_win_bytes_backward",
+    "act_data_pkt_fwd",
+    "min_seg_size_forward",
+    "active_mean",
+    "active_std",
+    "active_max",
+    "active_min",
+    "idle_mean",
+    "idle_std",
+    "idle_max",
+    "idle_min"
+  ],
+  "categorical_features": [],
+  "binary_indicator_features": [
+    "fwd_psh_flags",
+    "fwd_urg_flags",
+    "fin_flag_count",
+    "rst_flag_count",
+    "psh_flag_count",
+    "ack_flag_count",
+    "urg_flag_count",
+    "ece_flag_count"
+  ],
+  "removed_zero_variance_features": [
+    "bwd_psh_flags",
+    "bwd_urg_flags",
+    "fwd_avg_bytes_bulk",
+    "fwd_avg_packets_bulk",
+    "fwd_avg_bulk_rate",
+    "bwd_avg_bytes_bulk",
+    "bwd_avg_packets_bulk",
+    "bwd_avg_bulk_rate"
+  ],
+  "removed_duplicate_features": [
+    {
+      "retained": "total_fwd_packets",
+      "removed": [
+        "subflow_fwd_packets"
+      ]
+    },
+    {
+      "retained": "total_backward_packets",
+      "removed": [
+        "subflow_bwd_packets"
+      ]
+    },
+    {
+      "retained": "fwd_psh_flags",
+      "removed": [
+        "syn_flag_count"
+      ]
+    },
+    {
+      "retained": "fwd_urg_flags",
+      "removed": [
+        "cwe_flag_count"
+      ]
+    },
+    {
+      "retained": "fwd_header_length",
+      "removed": [
+        "fwd_header_length_1"
+      ]
+    }
+  ],
+  "rows_removed_missing_target": 0,
+  "infinite_values_replaced": 4376,
+  "missing_predictor_values_total": 5734
+}

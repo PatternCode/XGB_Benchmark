@@ -1,0 +1,231 @@
+{
+  "preparation_version": "1.0",
+  "dataset_key": "steel_plates_faults",
+  "dataset_name": "Steel Plates Faults",
+  "domain": "manufacturing",
+  "task": "multiclass",
+  "size": "small",
+  "source_file": "data/raw/steel_plates_faults/data.csv",
+  "source_sha256": "cf0bf1a55716c15d3428aaebc77d692fa9b4475da051edca221592a2af9d7070",
+  "processed_file": "data/processed/steel_plates_faults/data.csv",
+  "processed_sha256": "5ceb93ee8fedc6a4e7c06f526c0e90a0e398578f911ca108602e3b564b299362",
+  "original_target_column": "fault_type",
+  "standardized_original_target_column": "fault_type",
+  "target_column": "target",
+  "target_mapping": [
+    {
+      "original_label": "Bumps",
+      "encoded_label": 0
+    },
+    {
+      "original_label": "Dirtiness",
+      "encoded_label": 1
+    },
+    {
+      "original_label": "K_Scratch",
+      "encoded_label": 2
+    },
+    {
+      "original_label": "Other_Faults",
+      "encoded_label": 3
+    },
+    {
+      "original_label": "Pastry",
+      "encoded_label": 4
+    },
+    {
+      "original_label": "Stains",
+      "encoded_label": 5
+    },
+    {
+      "original_label": "Z_Scratch",
+      "encoded_label": 6
+    }
+  ],
+  "column_name_mapping": [
+    {
+      "original": "X_Minimum",
+      "standardized": "x_minimum"
+    },
+    {
+      "original": "X_Maximum",
+      "standardized": "x_maximum"
+    },
+    {
+      "original": "Y_Minimum",
+      "standardized": "y_minimum"
+    },
+    {
+      "original": "Y_Maximum",
+      "standardized": "y_maximum"
+    },
+    {
+      "original": "Pixels_Areas",
+      "standardized": "pixels_areas"
+    },
+    {
+      "original": "X_Perimeter",
+      "standardized": "x_perimeter"
+    },
+    {
+      "original": "Y_Perimeter",
+      "standardized": "y_perimeter"
+    },
+    {
+      "original": "Sum_of_Luminosity",
+      "standardized": "sum_of_luminosity"
+    },
+    {
+      "original": "Maximum_of_Luminosity",
+      "standardized": "maximum_of_luminosity"
+    },
+    {
+      "original": "Length_of_Conveyer",
+      "standardized": "length_of_conveyer"
+    },
+    {
+      "original": "TypeOfSteel_A300",
+      "standardized": "type_of_steel_a300"
+    },
+    {
+      "original": "TypeOfSteel_A400",
+      "standardized": "type_of_steel_a400"
+    },
+    {
+      "original": "Steel_Plate_Thickness",
+      "standardized": "steel_plate_thickness"
+    },
+    {
+      "original": "Edges_Index",
+      "standardized": "edges_index"
+    },
+    {
+      "original": "Empty_Index",
+      "standardized": "empty_index"
+    },
+    {
+      "original": "Square_Index",
+      "standardized": "square_index"
+    },
+    {
+      "original": "Outside_X_Index",
+      "standardized": "outside_x_index"
+    },
+    {
+      "original": "Edges_X_Index",
+      "standardized": "edges_x_index"
+    },
+    {
+      "original": "Edges_Y_Index",
+      "standardized": "edges_y_index"
+    },
+    {
+      "original": "Outside_Global_Index",
+      "standardized": "outside_global_index"
+    },
+    {
+      "original": "LogOfAreas",
+      "standardized": "log_of_areas"
+    },
+    {
+      "original": "Log_X_Index",
+      "standardized": "log_x_index"
+    },
+    {
+      "original": "Log_Y_Index",
+      "standardized": "log_y_index"
+    },
+    {
+      "original": "Orientation_Index",
+      "standardized": "orientation_index"
+    },
+    {
+      "original": "Luminosity_Index",
+      "standardized": "luminosity_index"
+    },
+    {
+      "original": "SigmoidOfAreas",
+      "standardized": "sigmoid_of_areas"
+    },
+    {
+      "original": "Minimum_of_Luminosity",
+      "standardized": "minimum_of_luminosity"
+    },
+    {
+      "original": "fault_type",
+      "standardized": "fault_type"
+    }
+  ],
+  "num_rows_raw": 1941,
+  "num_rows_processed": 1941,
+  "num_features_raw": 27,
+  "num_features_processed": 27,
+  "feature_names": [
+    "x_minimum",
+    "x_maximum",
+    "y_minimum",
+    "y_maximum",
+    "pixels_areas",
+    "x_perimeter",
+    "y_perimeter",
+    "sum_of_luminosity",
+    "maximum_of_luminosity",
+    "length_of_conveyer",
+    "type_of_steel_a300",
+    "type_of_steel_a400",
+    "steel_plate_thickness",
+    "edges_index",
+    "empty_index",
+    "square_index",
+    "outside_x_index",
+    "edges_x_index",
+    "edges_y_index",
+    "outside_global_index",
+    "log_of_areas",
+    "log_x_index",
+    "log_y_index",
+    "orientation_index",
+    "luminosity_index",
+    "sigmoid_of_areas",
+    "minimum_of_luminosity"
+  ],
+  "numeric_features": [
+    "x_minimum",
+    "x_maximum",
+    "y_minimum",
+    "y_maximum",
+    "pixels_areas",
+    "x_perimeter",
+    "y_perimeter",
+    "sum_of_luminosity",
+    "maximum_of_luminosity",
+    "length_of_conveyer",
+    "type_of_steel_a300",
+    "type_of_steel_a400",
+    "steel_plate_thickness",
+    "edges_index",
+    "empty_index",
+    "square_index",
+    "outside_x_index",
+    "edges_x_index",
+    "edges_y_index",
+    "outside_global_index",
+    "log_of_areas",
+    "log_x_index",
+    "log_y_index",
+    "orientation_index",
+    "luminosity_index",
+    "sigmoid_of_areas",
+    "minimum_of_luminosity"
+  ],
+  "categorical_features": [],
+  "binary_indicator_features": [
+    "type_of_steel_a300",
+    "type_of_steel_a400"
+  ],
+  "removed_zero_variance_features": [],
+  "removed_duplicate_features": [],
+  "rows_removed_missing_target": 0,
+  "infinite_values_replaced": 0,
+  "missing_predictor_values_total": 0
+}

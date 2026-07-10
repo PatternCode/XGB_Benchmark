@@ -1,0 +1,162 @@
+{
+  "preparation_version": "1.0",
+  "dataset_key": "dry_bean",
+  "dataset_name": "Dry Bean",
+  "domain": "agriculture",
+  "task": "multiclass",
+  "size": "small",
+  "source_file": "data/raw/dry_bean/data.csv",
+  "source_sha256": "1330e4ccc5c54a925e43daf60d1409ac62dad2a21de9a25213765bee4b655787",
+  "processed_file": "data/processed/dry_bean/data.csv",
+  "processed_sha256": "d4cd1d66a806b656f1f7760ca032590699c63d238f29e141db03b5ce0e78f619",
+  "original_target_column": "Class",
+  "standardized_original_target_column": "class",
+  "target_column": "target",
+  "target_mapping": [
+    {
+      "original_label": "BARBUNYA",
+      "encoded_label": 0
+    },
+    {
+      "original_label": "BOMBAY",
+      "encoded_label": 1
+    },
+    {
+      "original_label": "CALI",
+      "encoded_label": 2
+    },
+    {
+      "original_label": "DERMASON",
+      "encoded_label": 3
+    },
+    {
+      "original_label": "HOROZ",
+      "encoded_label": 4
+    },
+    {
+      "original_label": "SEKER",
+      "encoded_label": 5
+    },
+    {
+      "original_label": "SIRA",
+      "encoded_label": 6
+    }
+  ],
+  "column_name_mapping": [
+    {
+      "original": "Area",
+      "standardized": "area"
+    },
+    {
+      "original": "Perimeter",
+      "standardized": "perimeter"
+    },
+    {
+      "original": "MajorAxisLength",
+      "standardized": "major_axis_length"
+    },
+    {
+      "original": "MinorAxisLength",
+      "standardized": "minor_axis_length"
+    },
+    {
+      "original": "AspectRatio",
+      "standardized": "aspect_ratio"
+    },
+    {
+      "original": "Eccentricity",
+      "standardized": "eccentricity"
+    },
+    {
+      "original": "ConvexArea",
+      "standardized": "convex_area"
+    },
+    {
+      "original": "EquivDiameter",
+      "standardized": "equiv_diameter"
+    },
+    {
+      "original": "Extent",
+      "standardized": "extent"
+    },
+    {
+      "original": "Solidity",
+      "standardized": "solidity"
+    },
+    {
+      "original": "Roundness",
+      "standardized": "roundness"
+    },
+    {
+      "original": "Compactness",
+      "standardized": "compactness"
+    },
+    {
+      "original": "ShapeFactor1",
+      "standardized": "shape_factor1"
+    },
+    {
+      "original": "ShapeFactor2",
+      "standardized": "shape_factor2"
+    },
+    {
+      "original": "ShapeFactor3",
+      "standardized": "shape_factor3"
+    },
+    {
+      "original": "ShapeFactor4",
+      "standardized": "shape_factor4"
+    },
+    {
+      "original": "Class",
+      "standardized": "class"
+    }
+  ],
+  "num_rows_raw": 13611,
+  "num_rows_processed": 13611,
+  "num_features_raw": 16,
+  "num_features_processed": 16,
+  "feature_names": [
+    "area",
+    "perimeter",
+    "major_axis_length",
+    "minor_axis_length",
+    "aspect_ratio",
+    "eccentricity",
+    "convex_area",
+    "equiv_diameter",
+    "extent",
+    "solidity",
+    "roundness",
+    "compactness",
+    "shape_factor1",
+    "shape_factor2",
+    "shape_factor3",
+    "shape_factor4"
+  ],
+  "numeric_features": [
+    "area",
+    "perimeter",
+    "major_axis_length",
+    "minor_axis_length",
+    "aspect_ratio",
+    "eccentricity",
+    "convex_area",
+    "equiv_diameter",
+    "extent",
+    "solidity",
+    "roundness",
+    "compactness",
+    "shape_factor1",
+    "shape_factor2",
+    "shape_factor3",
+    "shape_factor4"
+  ],
+  "categorical_features": [],
+  "binary_indicator_features": [],
+  "removed_zero_variance_features": [],
+  "removed_duplicate_features": [],
+  "rows_removed_missing_target": 0,
+  "infinite_values_replaced": 0,
+  "missing_predictor_values_total": 0
+}
