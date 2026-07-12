@@ -160,3 +160,14 @@ mlflow.db
 # ==========================================================
 data/reports/*
 !data/reports/.gitkeep
+
+
+# Benchmark results
+results/**
+!results/runs/
+!results/runs/.gitkeep
+!results/summaries/
+!results/summaries/.gitkeep
+!results/figures/
+!results/figures/.gitkeep
+
