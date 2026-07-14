@@ -1,88 +1,103 @@
 experiment:
-  name: smoke_test
+  name: xgb_benchmark
   random_seed: 42
 
 datasets:
   adult_income:
-    enabled: false
+    enabled: true
   bank_marketing:
-    enabled: false
+    enabled: true
   breast_cancer_wisconsin:
     enabled: true
   cic_ids2017:
-    enabled: false
+    enabled: true
   covertype:
-    enabled: false
+    enabled: true
   credit_card_fraud:
-    enabled: false
+    enabled: true
   dry_bean:
-    enabled: false
+    enabled: true
   higgs:
-    enabled: false
+    enabled: true
   steel_plates_faults:
-    enabled: false
+    enabled: true
   unsw_nb15:
-    enabled: false
+    enabled: true
 
 cross_validation:
-  n_splits: 2
+  n_splits: 5
   shuffle: true
 
 feature_selection:
   ranking_methods:
     - gain
+    - weight
+    - cover
+    - shap
 
   feature_percentages:
+    - 2.5
+    - 5
+    - 7.5
     - 10
+    - 12.5
+    - 15
+    - 20
+    - 25
     - 30
 
-  random_repetitions: 1
+  random_repetitions: 20
 
 ranking_xgboost:
   booster: gbtree
   objective: auto
   eval_metric: auto
-  num_boost_round: 20
-  max_depth: 3
-  eta: 0.1
-  subsample: 1.0
-  colsample_bytree: 1.0
+  num_boost_round: 300
+  max_depth: 6
+  eta: 0.05
+  subsample: 0.8
+  colsample_bytree: 0.8
   tree_method: hist
 
 shap:
   explainer: tree
-  max_samples: 200
+  max_samples: null
 
 models:
   decision_tree:
     enabled: true
     max_depths:
+      - 1
       - 2
+      - 3
       - 4
+      - 5
+      - 6
+      - null
 
   knn:
-    enabled: false
+    enabled: true
     n_neighbors: 5
 
   logistic_regression:
-    enabled: false
+    enabled: true
     max_iter: 1000
 
   rbf_svm:
-    enabled: false
+    enabled: true
     C: 1.0
     gamma: scale
 
   xgboost:
-    enabled: false
+    enabled: true
     booster: gbtree
     objective: auto
     eval_metric: auto
-    num_boost_round: 20
-    max_depth: 3
-    eta: 0.1
-    subsample: 1.0
-    colsample_bytree: 1.0
+    num_boost_round: 300
+    max_depth: 6
+    eta: 0.05
+    subsample: 0.8
+    colsample_bytree: 0.8
     tree_method: hist
 
 metrics:
@@ -90,6 +105,8 @@ metrics:
   - balanced_accuracy
   - f1_macro
   - f1_weighted
+  - roc_auc
+  - pr_auc
 
 output:
   directory: results/runs
