@@ -16,12 +16,36 @@ def smoke_config() -> dict[str, Any]:
     return load_config("configs/smoke_test.yaml")
 
 
+
+
+
 @pytest.fixture
-def experiment_results(
+def experiment_output(
     smoke_config: dict[str, Any],
-) -> list[dict[str, Any]]:
+) -> dict[str, list[dict[str, Any]]]:
     """Run the smoke experiment once for use across tests."""
     return run_experiment(smoke_config)
+
+
+@pytest.fixture
+def experiment_results(
+    experiment_output: dict[str, list[dict[str, Any]]],
+) -> list[dict[str, Any]]:
+    """Return performance result rows."""
+    return experiment_output["results"]
+
+
+@pytest.fixture
+def experiment_rankings(
+    experiment_output: dict[str, list[dict[str, Any]]],
+) -> list[dict[str, Any]]:
+    """Return complete feature-ranking rows."""
+    return experiment_output["rankings"]
+
+
+
+
+
 
 
 def test_run_experiment_returns_expected_number_of_rows(
@@ -67,6 +91,13 @@ def test_run_experiment_returns_expected_fields(
         "balanced_accuracy",
         "f1_macro",
         "f1_weighted",
+        "ranking_time_seconds",
+        "model_training_time_seconds",
+        "prediction_time_seconds",
+        "actual_tree_depth",
+        "n_tree_leaves",
+        "n_tree_nodes",
+        "n_tree_features_used",
     }
 
     for result in experiment_results:
@@ -235,3 +266,165 @@ def test_run_experiment_rejects_no_enabled_models(
         match="At least one downstream model must be enabled",
     ):
         run_experiment(invalid_config)
+
+def test_run_experiment_records_non_negative_model_times(
+    experiment_results: list[dict[str, Any]],
+) -> None:
+    """Record non-negative downstream training and prediction times."""
+    for result in experiment_results:
+        assert result["model_training_time_seconds"] >= 0.0
+        assert result["prediction_time_seconds"] >= 0.0
+
+
+def test_run_experiment_records_ranking_time_for_ranked_rows(
+    experiment_results: list[dict[str, Any]],
+) -> None:
+    """Record ranking-stage time only for ranked feature subsets."""
+    for result in experiment_results:
+        if result["selection_method"] == "gain":
+            assert result["ranking_time_seconds"] is not None
+            assert result["ranking_time_seconds"] >= 0.0
+        else:
+            assert result["ranking_time_seconds"] is None
+
+
+def test_run_experiment_records_valid_tree_complexity(
+    experiment_results: list[dict[str, Any]],
+) -> None:
+    """Record internally consistent fitted-tree complexity."""
+    for result in experiment_results:
+        actual_depth = result["actual_tree_depth"]
+        n_leaves = result["n_tree_leaves"]
+        n_nodes = result["n_tree_nodes"]
+        n_features_used = result["n_tree_features_used"]
+
+        assert actual_depth is not None
+        assert n_leaves is not None
+        assert n_nodes is not None
+        assert n_features_used is not None
+
+        assert 0 <= actual_depth <= result["max_depth"]
+        assert n_leaves >= 1
+        assert n_nodes >= 1
+        assert n_features_used >= 0
+
+        assert n_nodes == 2 * n_leaves - 1
+
+        assert (
+            n_features_used
+            <= result["n_selected_features"]
+        )
+
+
+def test_run_experiment_tree_depth_respects_configured_limit(
+    experiment_results: list[dict[str, Any]],
+) -> None:
+    """Ensure fitted trees do not exceed their configured depth."""
+    for result in experiment_results:
+        assert (
+            result["actual_tree_depth"]
+            <= result["max_depth"]
+        )
+
+
+def test_run_experiment_features_used_do_not_exceed_subset_size(
+    experiment_results: list[dict[str, Any]],
+) -> None:
+    """Ensure a fitted tree uses no more than the supplied features."""
+    for result in experiment_results:
+        assert (
+            result["n_tree_features_used"]
+            <= result["n_selected_features"]
+        )
+
+def test_run_experiment_returns_expected_ranking_count(
+    experiment_rankings: list[dict[str, Any]],
+) -> None:
+    """Return one ranking row per feature, method, and fold."""
+    assert len(experiment_rankings) == 60
+
+
+def test_run_experiment_ranking_rows_have_expected_fields(
+    experiment_rankings: list[dict[str, Any]],
+) -> None:
+    """Include all required ranking fields."""
+    required_fields = {
+        "experiment",
+        "dataset",
+        "outer_fold",
+        "ranking_method",
+        "feature",
+        "rank",
+        "importance_score",
+    }
+
+    for row in experiment_rankings:
+        assert set(row) == required_fields
+
+
+def test_run_experiment_rankings_cover_every_feature(
+    experiment_rankings: list[dict[str, Any]],
+) -> None:
+    """Record all 30 features in each outer fold."""
+    counts: dict[tuple[int, str], int] = {}
+
+    for row in experiment_rankings:
+        key = (
+            row["outer_fold"],
+            row["ranking_method"],
+        )
+        counts[key] = counts.get(key, 0) + 1
+
+    assert counts == {
+        (1, "gain"): 30,
+        (2, "gain"): 30,
+    }
+
+
+def test_run_experiment_ranks_are_consecutive(
+    experiment_rankings: list[dict[str, Any]],
+) -> None:
+    """Assign consecutive ranks from 1 to the feature count."""
+    for outer_fold in (1, 2):
+        ranks = [
+            row["rank"]
+            for row in experiment_rankings
+            if row["outer_fold"] == outer_fold
+            and row["ranking_method"] == "gain"
+        ]
+
+        assert ranks == list(range(1, 31))
+
+
+def test_run_experiment_ranking_scores_are_descending(
+    experiment_rankings: list[dict[str, Any]],
+) -> None:
+    """Store importance scores in descending ranking order."""
+    for outer_fold in (1, 2):
+        scores = [
+            row["importance_score"]
+            for row in experiment_rankings
+            if row["outer_fold"] == outer_fold
+            and row["ranking_method"] == "gain"
+        ]
+
+        assert scores == sorted(
+            scores,
+            reverse=True,
+        )
+
+
+def test_run_experiment_ranking_features_are_unique(
+    experiment_rankings: list[dict[str, Any]],
+) -> None:
+    """Record every feature exactly once per fold and method."""
+    for outer_fold in (1, 2):
+        features = [
+            row["feature"]
+            for row in experiment_rankings
+            if row["outer_fold"] == outer_fold
+            and row["ranking_method"] == "gain"
+        ]
+
+        assert len(features) == 30
+        assert len(set(features)) == 30

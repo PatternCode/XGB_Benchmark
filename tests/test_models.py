@@ -12,6 +12,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 from benchmark.models import (
     ModelError,
+    get_model_complexity,
     predict_model,
     train_model,
 )
@@ -637,3 +638,71 @@ def test_predict_model_rejects_invalid_class_count(
             X=X_test,
             n_classes=n_classes,  # type: ignore[arg-type]
         )
+
+def test_get_model_complexity_returns_tree_statistics(
+    binary_training_data: tuple[
+        pd.DataFrame,
+        pd.DataFrame,
+        pd.Series,
+    ],
+) -> None:
+    """Return realised complexity for a fitted decision tree."""
+    X_train, _, y_train = binary_training_data
+
+    model = train_model(
+        X_train=X_train,
+        y_train=y_train,
+        model_name="decision_tree",
+        model_config={"max_depth": 3},
+        random_seed=42,
+    )
+
+    complexity = get_model_complexity(model)
+
+    assert complexity["actual_tree_depth"] is not None
+    assert complexity["n_tree_leaves"] is not None
+    assert complexity["n_tree_nodes"] is not None
+    assert complexity["n_tree_features_used"] is not None
+
+    assert 1 <= complexity["actual_tree_depth"] <= 3
+    assert complexity["n_tree_leaves"] >= 2
+    assert complexity["n_tree_nodes"] >= 3
+    assert complexity["n_tree_features_used"] >= 1
+
+    assert (
+        complexity["n_tree_nodes"]
+        == 2 * complexity["n_tree_leaves"] - 1
+    )
+
+    assert (
+        complexity["n_tree_features_used"]
+        <= X_train.shape[1]
+    )
+
+
+def test_get_model_complexity_returns_none_for_non_tree_model(
+    binary_training_data: tuple[
+        pd.DataFrame,
+        pd.DataFrame,
+        pd.Series,
+    ],
+) -> None:
+    """Return empty tree-complexity fields for a non-tree model."""
+    X_train, _, y_train = binary_training_data
+
+    model = train_model(
+        X_train=X_train,
+        y_train=y_train,
+        model_name="logistic_regression",
+        model_config={"max_iter": 500},
+        random_seed=42,
+    )
+
+    complexity = get_model_complexity(model)
+
+    assert complexity == {
+        "actual_tree_depth": None,
+        "n_tree_leaves": None,
+        "n_tree_nodes": None,
+        "n_tree_features_used": None,
+    }

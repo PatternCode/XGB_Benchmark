@@ -12,7 +12,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-
+from sklearn.pipeline import Pipeline
 
 SUPPORTED_MODELS = {
     "decision_tree",
@@ -497,3 +497,44 @@ def predict_model(
         )
 
     return predictions.astype(int), probabilities
+
+def get_model_complexity(
+    model: BaseEstimator | xgb.Booster,
+) -> dict[str, int | None]:
+    """Return fitted decision-tree complexity information.
+
+    Non-decision-tree models return null values because these tree-specific
+    measures do not apply to them.
+
+    Parameters
+    ----------
+    model
+        Fitted downstream classifier.
+
+    Returns
+    -------
+    dict[str, int | None]
+        Realised depth, number of leaves, number of nodes, and number of
+        features used by a fitted decision tree.
+    """
+    if not isinstance(model, DecisionTreeClassifier):
+        return {
+            "actual_tree_depth": None,
+            "n_tree_leaves": None,
+            "n_tree_nodes": None,
+            "n_tree_features_used": None,
+        }
+
+    used_feature_indices = model.tree_.feature
+    used_feature_indices = used_feature_indices[
+        used_feature_indices >= 0
+    ]
+
+    return {
+        "actual_tree_depth": int(model.get_depth()),
+        "n_tree_leaves": int(model.get_n_leaves()),
+        "n_tree_nodes": int(model.tree_.node_count),
+        "n_tree_features_used": int(
+            len(np.unique(used_feature_indices))
+        ),
+    }

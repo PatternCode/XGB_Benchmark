@@ -6,7 +6,7 @@ from typing import Sequence
 
 from benchmark.config import load_config
 from benchmark.experiment import run_experiment
-from benchmark.results import save_results
+from benchmark.results import save_experiment_output
 
 
 def parse_arguments(
@@ -30,27 +30,37 @@ def parse_arguments(
 def main(
     arguments: Sequence[str] | None = None,
 ) -> Path:
-    """Run an experiment and save its results."""
+    """Run an experiment and save its output files."""
     args = parse_arguments(arguments)
 
     config = load_config(args.config)
 
-    results = run_experiment(config)
+    experiment_output = run_experiment(config)
 
-    results_path = save_results(
-        results=results,
+    saved_paths = save_experiment_output(
+        experiment_output=experiment_output,
         output_directory=config["output"]["directory"],
         experiment_name=config["experiment"]["name"],
-    )
+        config=config,
+)
 
     print(
-        f"Experiment completed successfully: "
+        "Experiment completed successfully: "
         f"{config['experiment']['name']}"
     )
-    print(f"Result rows: {len(results)}")
-    print(f"Results saved to: {results_path}")
+    print(
+        "Result rows: "
+        f"{len(experiment_output['results'])}"
+    )
+    print(
+        "Ranking rows: "
+        f"{len(experiment_output['rankings'])}"
+    )
+    print(f"Run directory: {saved_paths['run_directory']}")
+    print(f"Results saved to: {saved_paths['results']}")
+    print(f"Rankings saved to: {saved_paths['rankings']}")
 
-    return results_path
+    return saved_paths["run_directory"]
 
 
 if __name__ == "__main__":

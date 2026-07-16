@@ -1,5 +1,6 @@
 """Tests for benchmark result conversion and saving."""
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -9,6 +10,7 @@ import pytest
 from benchmark.results import (
     ResultError,
     results_to_frame,
+    save_experiment_output,
     save_results,
 )
 
@@ -46,6 +48,87 @@ def sample_results() -> list[dict[str, Any]]:
             "f1_macro": 0.90,
         },
     ]
+
+
+@pytest.fixture
+def sample_config() -> dict[str, Any]:
+    """Return a minimal benchmark configuration."""
+    return {
+        "experiment": {
+            "name": "smoke_test",
+            "random_seed": 42,
+        },
+        "datasets": {
+            "sample_dataset": {
+                "enabled": True,
+            },
+        },
+        "models": {
+            "decision_tree": {
+                "enabled": True,
+            },
+        },
+    }
+
+
+@pytest.fixture
+def sample_experiment_output(
+    sample_results: list[dict[str, Any]],
+) -> dict[str, list[dict[str, Any]]]:
+    """Return sample result, ranking, and selected-feature records."""
+    rankings = [
+        {
+            "experiment": "smoke_test",
+            "dataset": "sample_dataset",
+            "outer_fold": 1,
+            "ranking_method": "gain",
+            "feature": "feature_a",
+            "rank": 1,
+            "importance_score": 4.5,
+        },
+        {
+            "experiment": "smoke_test",
+            "dataset": "sample_dataset",
+            "outer_fold": 1,
+            "ranking_method": "gain",
+            "feature": "feature_b",
+            "rank": 2,
+            "importance_score": 1.2,
+        },
+    ]
+
+    selected_features = [
+        {
+            "experiment": "smoke_test",
+            "dataset": "sample_dataset",
+            "outer_fold": 1,
+            "selection_method": "gain",
+            "requested_percentage": 10.0,
+            "actual_percentage": 10.0,
+            "random_repetition": None,
+            "feature": "feature_a",
+            "selection_rank": 1,
+            "importance_score": 4.5,
+        },
+        {
+            "experiment": "smoke_test",
+            "dataset": "sample_dataset",
+            "outer_fold": 1,
+            "selection_method": "gain",
+            "requested_percentage": 10.0,
+            "actual_percentage": 10.0,
+            "random_repetition": None,
+            "feature": "feature_b",
+            "selection_rank": 2,
+            "importance_score": 1.2,
+        },
+    ]
+
+    return {
+        "results": sample_results,
+        "rankings": rankings,
+        "selected_features": selected_features,
+    }
 
 
 def test_results_to_frame_returns_dataframe(
@@ -183,4 +266,210 @@ def test_save_results_rejects_invalid_experiment_name(
             results=sample_results,
             output_directory=tmp_path,
             experiment_name=experiment_name,  # type: ignore[arg-type]
+        )
+
+
+def test_save_experiment_output_creates_all_output_files(
+    tmp_path: Path,
+    sample_experiment_output: dict[
+        str,
+        list[dict[str, Any]],
+    ],
+    sample_config: dict[str, Any],
+) -> None:
+    """Save all experiment output files."""
+    saved_paths = save_experiment_output(
+        experiment_output=sample_experiment_output,
+        output_directory=tmp_path,
+        experiment_name="smoke_test",
+        config=sample_config,
+    )
+
+    assert saved_paths["run_directory"].is_dir()
+    assert saved_paths["results"].is_file()
+    assert saved_paths["rankings"].is_file()
+    assert saved_paths["selected_features"].is_file()
+    assert saved_paths["metadata"].is_file()
+
+    assert saved_paths["results"].name == "results.csv"
+    assert saved_paths["rankings"].name == "rankings.csv"
+    assert (
+        saved_paths["selected_features"].name
+        == "selected_features.csv"
+    )
+    assert saved_paths["metadata"].name == "run_metadata.json"
+
+
+def test_save_experiment_output_writes_expected_rankings(
+    tmp_path: Path,
+    sample_experiment_output: dict[
+        str,
+        list[dict[str, Any]],
+    ],
+    sample_config: dict[str, Any],
+) -> None:
+    """Write ranking fields and rows to rankings.csv."""
+    saved_paths = save_experiment_output(
+        experiment_output=sample_experiment_output,
+        output_directory=tmp_path,
+        experiment_name="smoke_test",
+        config=sample_config,
+    )
+
+    rankings_frame = pd.read_csv(
+        saved_paths["rankings"]
+    )
+
+    assert len(rankings_frame) == 2
+    assert rankings_frame["feature"].tolist() == [
+        "feature_a",
+        "feature_b",
+    ]
+    assert rankings_frame["rank"].tolist() == [1, 2]
+    assert rankings_frame[
+        "importance_score"
+    ].tolist() == pytest.approx([4.5, 1.2])
+
+
+def test_save_experiment_output_writes_selected_features(
+    tmp_path: Path,
+    sample_experiment_output: dict[
+        str,
+        list[dict[str, Any]],
+    ],
+    sample_config: dict[str, Any],
+) -> None:
+    """Write selected-feature records to selected_features.csv."""
+    saved_paths = save_experiment_output(
+        experiment_output=sample_experiment_output,
+        output_directory=tmp_path,
+        experiment_name="smoke_test",
+        config=sample_config,
+    )
+
+    selected_frame = pd.read_csv(
+        saved_paths["selected_features"]
+    )
+
+    assert len(selected_frame) == 2
+    assert selected_frame["feature"].tolist() == [
+        "feature_a",
+        "feature_b",
+    ]
+    assert selected_frame["selection_rank"].tolist() == [1, 2]
+    assert selected_frame[
+        "importance_score"
+    ].tolist() == pytest.approx([4.5, 1.2])
+
+
+def test_save_experiment_output_writes_metadata(
+    tmp_path: Path,
+    sample_experiment_output: dict[
+        str,
+        list[dict[str, Any]],
+    ],
+    sample_config: dict[str, Any],
+) -> None:
+    """Write reproducibility information to run_metadata.json."""
+    saved_paths = save_experiment_output(
+        experiment_output=sample_experiment_output,
+        output_directory=tmp_path,
+        experiment_name="smoke_test",
+        config=sample_config,
+    )
+
+    with saved_paths["metadata"].open(
+        "r",
+        encoding="utf-8",
+    ) as metadata_file:
+        metadata = json.load(metadata_file)
+
+    assert metadata["experiment"] == "smoke_test"
+    assert metadata["random_seed"] == 42
+    assert metadata["enabled_datasets"] == [
+        "sample_dataset"
+    ]
+    assert metadata["enabled_models"] == [
+        "decision_tree"
+    ]
+    assert metadata["n_result_rows"] == 2
+    assert metadata["n_ranking_rows"] == 2
+    assert metadata["n_selected_feature_rows"] == 2
+    assert metadata["configuration"] == sample_config
+
+
+def test_save_experiment_output_uses_same_run_directory(
+    tmp_path: Path,
+    sample_experiment_output: dict[
+        str,
+        list[dict[str, Any]],
+    ],
+    sample_config: dict[str, Any],
+) -> None:
+    """Store all output files in one timestamped directory."""
+    saved_paths = save_experiment_output(
+        experiment_output=sample_experiment_output,
+        output_directory=tmp_path,
+        experiment_name="smoke_test",
+        config=sample_config,
+    )
+
+    run_directory = saved_paths["run_directory"]
+
+    assert saved_paths["results"].parent == run_directory
+    assert saved_paths["rankings"].parent == run_directory
+    assert (
+        saved_paths["selected_features"].parent
+        == run_directory
+    )
+    assert saved_paths["metadata"].parent == run_directory
+
+
+@pytest.mark.parametrize(
+    "missing_key",
+    [
+        "results",
+        "rankings",
+        "selected_features",
+    ],
+)
+def test_save_experiment_output_rejects_missing_collection(
+    tmp_path: Path,
+    sample_experiment_output: dict[
+        str,
+        list[dict[str, Any]],
+    ],
+    sample_config: dict[str, Any],
+    missing_key: str,
+) -> None:
+    """Require every experiment-output collection."""
+    invalid_output = dict(sample_experiment_output)
+    invalid_output.pop(missing_key)
+
+    with pytest.raises(
+        ResultError,
+        match=f"missing '{missing_key}'",
+    ):
+        save_experiment_output(
+            experiment_output=invalid_output,
+            output_directory=tmp_path,
+            experiment_name="smoke_test",
+            config=sample_config,
+        )
+
+
+def test_save_experiment_output_rejects_non_dictionary(
+    tmp_path: Path,
+    sample_config: dict[str, Any],
+) -> None:
+    """Require the complete output to be a dictionary."""
+    with pytest.raises(
+        ResultError,
+        match="experiment_output must be a dictionary",
+    ):
+        save_experiment_output(
+            experiment_output=[],  # type: ignore[arg-type]
+            output_directory=tmp_path,
+            experiment_name="smoke_test",
+            config=sample_config,
         )

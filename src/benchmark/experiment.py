@@ -1,5 +1,6 @@
 """Coordinate leakage-free XGB Benchmark experiments."""
 
+from time import perf_counter
 from typing import Any
 
 import pandas as pd
@@ -8,7 +9,11 @@ from sklearn.model_selection import StratifiedKFold
 from benchmark.datasets import load_dataset
 from benchmark.importance import compute_feature_importance
 from benchmark.metrics import calculate_metrics
-from benchmark.models import predict_model, train_model
+from benchmark.models import (
+    get_model_complexity,
+    predict_model,
+    train_model,
+)
 from benchmark.selection import (
     get_unique_feature_counts,
     select_random_features,
@@ -24,11 +29,9 @@ def _get_enabled_datasets(
     config: dict[str, Any],
 ) -> list[str]:
     """Return the names of enabled datasets."""
-    datasets = config["datasets"]
-
     enabled_datasets = [
         dataset_name
-        for dataset_name, settings in datasets.items()
+        for dataset_name, settings in config["datasets"].items()
         if settings.get("enabled", False)
     ]
 
@@ -149,10 +152,16 @@ def _evaluate_feature_subset(
     model_config: dict[str, Any],
     metric_names: list[str],
     random_seed: int,
-) -> dict[str, float]:
+) -> tuple[
+    dict[str, float],
+    dict[str, float],
+    dict[str, int | None],
+]:
     """Train and evaluate one model on one feature subset."""
     X_train_selected = X_train.loc[:, selected_features]
     X_test_selected = X_test.loc[:, selected_features]
+
+    training_start = perf_counter()
 
     model = train_model(
         X_train=X_train_selected,
@@ -162,18 +171,33 @@ def _evaluate_feature_subset(
         random_seed=random_seed,
     )
 
+    model_training_time = perf_counter() - training_start
+
+    prediction_start = perf_counter()
+
     y_pred, y_prob = predict_model(
         model=model,
         X=X_test_selected,
         n_classes=int(y_train.nunique()),
     )
 
-    return calculate_metrics(
+    prediction_time = perf_counter() - prediction_start
+
+    metrics = calculate_metrics(
         y_true=y_test,
         y_pred=y_pred,
         y_prob=y_prob,
         metric_names=metric_names,
     )
+
+    timings = {
+        "model_training_time_seconds": model_training_time,
+        "prediction_time_seconds": prediction_time,
+    }
+
+    complexity = get_model_complexity(model)
+
+    return metrics, timings, complexity
 
 
 def _build_result_row(
@@ -188,6 +212,9 @@ def _build_result_row(
     random_repetition: int | None,
     model_name: str,
     model_config: dict[str, Any],
+    ranking_time_seconds: float | None,
+    timings: dict[str, float],
+    complexity: dict[str, int | None],
     metrics: dict[str, float],
 ) -> dict[str, Any]:
     """Create one flat experiment-result record."""
@@ -201,6 +228,7 @@ def _build_result_row(
         "n_selected_features": n_selected_features,
         "random_repetition": random_repetition,
         "model": model_name,
+        "ranking_time_seconds": ranking_time_seconds,
     }
 
     result.update(
@@ -210,38 +238,92 @@ def _build_result_row(
         )
     )
 
+    result.update(timings)
+    result.update(complexity)
     result.update(metrics)
 
     return result
 
 
+def _build_ranking_rows(
+    *,
+    experiment_name: str,
+    dataset_name: str,
+    outer_fold: int,
+    ranking_method: str,
+    ranking: pd.Series,
+) -> list[dict[str, Any]]:
+    """Create one record for every feature in an importance ranking."""
+    rows: list[dict[str, Any]] = []
+
+    for rank, (feature, score) in enumerate(
+        ranking.items(),
+        start=1,
+    ):
+        rows.append(
+            {
+                "experiment": experiment_name,
+                "dataset": dataset_name,
+                "outer_fold": outer_fold,
+                "ranking_method": ranking_method,
+                "feature": str(feature),
+                "rank": rank,
+                "importance_score": float(score),
+            }
+        )
+
+    return rows
+
+def _build_selected_feature_rows(
+    *,
+    experiment_name: str,
+    dataset_name: str,
+    outer_fold: int,
+    selection_method: str,
+    requested_percentage: float | None,
+    actual_percentage: float,
+    random_repetition: int | None,
+    selected_features: list[str],
+    ranking: pd.Series | None,
+) -> list[dict[str, Any]]:
+    """Create one record for every selected feature."""
+    rows: list[dict[str, Any]] = []
+
+    for selection_rank, feature in enumerate(
+        selected_features,
+        start=1,
+    ):
+        importance_score = None
+
+        if ranking is not None:
+            importance_score = float(ranking.loc[feature])
+
+        rows.append(
+            {
+                "experiment": experiment_name,
+                "dataset": dataset_name,
+                "outer_fold": outer_fold,
+                "selection_method": selection_method,
+                "requested_percentage": requested_percentage,
+                "actual_percentage": actual_percentage,
+                "random_repetition": random_repetition,
+                "feature": feature,
+                "selection_rank": selection_rank,
+                "importance_score": importance_score,
+            }
+        )
+
+    return rows
+
+
 def run_experiment(
     config: dict[str, Any],
-) -> list[dict[str, Any]]:
+) -> dict[str, list[dict[str, Any]]]:
     """Run the complete leakage-free benchmark experiment.
 
-    The function performs stratified outer cross-validation. Feature
-    ranking, feature selection, preprocessing, and model fitting are all
-    performed using outer-training data only. The outer test fold is used
-    only for prediction and final metric calculation.
-
-    Parameters
-    ----------
-    config
-        Validated benchmark configuration.
-
-    Returns
-    -------
-    list[dict[str, Any]]
-        One flat result record for every evaluated combination of dataset,
-        outer fold, feature-selection strategy, subset size, and downstream
-        model.
-
-    Raises
-    ------
-    ExperimentError
-        If no dataset or downstream model is enabled, or if the experiment
-        configuration is inconsistent.
+    Feature ranking, feature selection, preprocessing, and model fitting
+    use outer-training data only. Outer-test data are used only for
+    prediction and metric calculation.
     """
     experiment_name = config["experiment"]["name"]
     base_seed = config["experiment"]["random_seed"]
@@ -273,6 +355,8 @@ def run_experiment(
     )
 
     results: list[dict[str, Any]] = []
+    ranking_rows: list[dict[str, Any]] = []
+    selected_feature_rows: list[dict[str, Any]] = []
 
     for dataset_index, dataset_name in enumerate(
         enabled_datasets
@@ -302,6 +386,8 @@ def run_experiment(
                 outer_fold=outer_fold,
             )
 
+            ranking_start = perf_counter()
+
             _, rankings = compute_feature_importance(
                 X_train=X_train,
                 y_train=y_train,
@@ -310,6 +396,18 @@ def run_experiment(
                 ranking_methods=ranking_methods,
                 random_seed=fold_seed,
             )
+
+            ranking_time = perf_counter() - ranking_start
+            for method, ranking in rankings.items():
+                ranking_rows.extend(
+            _build_ranking_rows(
+            experiment_name=experiment_name,
+            dataset_name=dataset_name,
+            outer_fold=outer_fold,
+            ranking_method=method,
+            ranking=ranking,
+        )
+    )
 
             for method in ranking_methods:
                 ranking = rankings[method]
@@ -325,6 +423,25 @@ def run_experiment(
                             ]
                         ),
                     )
+                    selected_feature_rows.extend(
+                        _build_selected_feature_rows(
+                            experiment_name=experiment_name,
+                            dataset_name=dataset_name,
+                            outer_fold=outer_fold,
+                            selection_method=method,
+                            requested_percentage=float(
+                                 subset_info["requested_percentage"]
+                            ),
+                            actual_percentage=float(
+                                subset_info["actual_percentage"]
+                            ),
+                            random_repetition=None,
+                            selected_features=selected_features,
+                            ranking=ranking,
+                        )
+                    )
+
+
 
                     for model_name, model_config in model_variants:
                         model_seed = _derive_random_seed(
@@ -334,7 +451,11 @@ def run_experiment(
                             subset_index=subset_index,
                         )
 
-                        metrics = _evaluate_feature_subset(
+                        (
+                            metrics,
+                            timings,
+                            complexity,
+                        ) = _evaluate_feature_subset(
                             X_train=X_train,
                             X_test=X_test,
                             y_train=y_train,
@@ -368,6 +489,9 @@ def run_experiment(
                                 random_repetition=None,
                                 model_name=model_name,
                                 model_config=model_config,
+                                ranking_time_seconds=ranking_time,
+                                timings=timings,
+                                complexity=complexity,
                                 metrics=metrics,
                             )
                         )
@@ -396,8 +520,35 @@ def run_experiment(
                         random_seed=random_seed,
                     )
 
+                    selected_feature_rows.extend(
+                        _build_selected_feature_rows(
+                             experiment_name=experiment_name,
+                             dataset_name=dataset_name,
+                             outer_fold=outer_fold,
+                             selection_method="random",
+                             requested_percentage=float(
+                                 subset_info["requested_percentage"]
+                        ),
+                            actual_percentage=float(
+                             subset_info["actual_percentage"]
+                        ),
+                            random_repetition=repetition + 1,
+                            selected_features=selected_features,
+                            ranking=None,
+                        )
+                    )
+
+
+
+
+
+
                     for model_name, model_config in model_variants:
-                        metrics = _evaluate_feature_subset(
+                        (
+                            metrics,
+                            timings,
+                            complexity,
+                        ) = _evaluate_feature_subset(
                             X_train=X_train,
                             X_test=X_test,
                             y_train=y_train,
@@ -431,14 +582,37 @@ def run_experiment(
                                 random_repetition=repetition + 1,
                                 model_name=model_name,
                                 model_config=model_config,
+                                ranking_time_seconds=None,
+                                timings=timings,
+                                complexity=complexity,
                                 metrics=metrics,
                             )
                         )
 
             all_features = X_train.columns.tolist()
 
+            selected_feature_rows.extend(
+                _build_selected_feature_rows(
+                    experiment_name=experiment_name,
+                    dataset_name=dataset_name,
+                    outer_fold=outer_fold,
+                    selection_method="all_features",
+                    requested_percentage=None,
+                    actual_percentage=100.0,
+                    random_repetition=None,
+                    selected_features=all_features,
+                    ranking=None,
+                )
+            )
+
+
+
             for model_name, model_config in model_variants:
-                metrics = _evaluate_feature_subset(
+                (
+                    metrics,
+                    timings,
+                    complexity,
+                ) = _evaluate_feature_subset(
                     X_train=X_train,
                     X_test=X_test,
                     y_train=y_train,
@@ -462,8 +636,15 @@ def run_experiment(
                         random_repetition=None,
                         model_name=model_name,
                         model_config=model_config,
+                        ranking_time_seconds=None,
+                        timings=timings,
+                        complexity=complexity,
                         metrics=metrics,
                     )
                 )
 
-    return results
+    return {
+    "results": results,
+    "rankings": ranking_rows,
+    "selected_features": selected_feature_rows,
+    }
