@@ -150,13 +150,50 @@ def _build_run_metadata(
     }
 
 
-def save_experiment_output(
-    experiment_output: dict[str, list[dict[str, Any]]],
+def create_run_directory(
     output_directory: str | Path,
+    experiment_name: str,
+) -> Path:
+    """Create and return a timestamped experiment run directory."""
+    if (
+        not isinstance(experiment_name, str)
+        or not experiment_name.strip()
+    ):
+        raise ResultError(
+            "experiment_name must be a non-empty string."
+        )
+
+    timestamp = datetime.now(timezone.utc).strftime(
+        "%Y%m%dT%H%M%S_%fZ"
+    )
+
+    run_directory = (
+        Path(output_directory)
+        / f"{experiment_name}_{timestamp}"
+    )
+
+    try:
+        run_directory.mkdir(
+            parents=True,
+            exist_ok=False,
+        )
+    except OSError as error:
+        raise ResultError(
+            f"Could not create experiment run directory "
+            f"'{run_directory}': {error}"
+        ) from error
+
+    return run_directory
+
+
+def write_experiment_output(
+    *,
+    experiment_output: dict[str, list[dict[str, Any]]],
+    run_directory: str | Path,
     experiment_name: str,
     config: dict[str, Any],
 ) -> dict[str, Path]:
-    """Save benchmark results and reproducibility records."""
+    """Write experiment output files into an existing run directory."""
     if (
         not isinstance(experiment_name, str)
         or not experiment_name.strip()
@@ -197,6 +234,13 @@ def save_experiment_output(
         experiment_output["selected_features"]
     )
 
+    run_directory = Path(run_directory)
+
+    if not run_directory.is_dir():
+        raise ResultError(
+            f"Run directory does not exist: '{run_directory}'."
+        )
+
     timestamp = datetime.now(timezone.utc).strftime(
         "%Y%m%dT%H%M%S_%fZ"
     )
@@ -208,11 +252,6 @@ def save_experiment_output(
         timestamp=timestamp,
     )
 
-    run_directory = (
-        Path(output_directory)
-        / f"{experiment_name}_{timestamp}"
-    )
-
     results_path = run_directory / "results.csv"
     rankings_path = run_directory / "rankings.csv"
     selected_features_path = (
@@ -221,11 +260,6 @@ def save_experiment_output(
     metadata_path = run_directory / "run_metadata.json"
 
     try:
-        run_directory.mkdir(
-            parents=True,
-            exist_ok=False,
-        )
-
         results_frame.to_csv(
             results_path,
             index=False,
@@ -254,7 +288,7 @@ def save_experiment_output(
 
     except OSError as error:
         raise ResultError(
-            f"Could not save experiment output in "
+            f"Could not write experiment output in "
             f"'{run_directory}': {error}"
         ) from error
 
@@ -265,3 +299,23 @@ def save_experiment_output(
         "selected_features": selected_features_path,
         "metadata": metadata_path,
     }
+
+
+def save_experiment_output(
+    experiment_output: dict[str, list[dict[str, Any]]],
+    output_directory: str | Path,
+    experiment_name: str,
+    config: dict[str, Any],
+) -> dict[str, Path]:
+    """Create a run directory and save experiment output files."""
+    run_directory = create_run_directory(
+        output_directory=output_directory,
+        experiment_name=experiment_name,
+    )
+
+    return write_experiment_output(
+        experiment_output=experiment_output,
+        run_directory=run_directory,
+        experiment_name=experiment_name,
+        config=config,
+    )
