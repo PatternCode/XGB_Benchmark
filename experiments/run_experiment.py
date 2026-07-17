@@ -2,11 +2,14 @@
 
 import argparse
 from pathlib import Path
-from typing import Sequence
+from typing import Any, Sequence
 
 from benchmark.config import load_config
 from benchmark.experiment import run_experiment
-from benchmark.results import save_experiment_output
+from benchmark.results import (
+    create_run_directory,
+    write_experiment_output,
+)
 
 
 def parse_arguments(
@@ -30,23 +33,53 @@ def parse_arguments(
 def main(
     arguments: Sequence[str] | None = None,
 ) -> Path:
-    """Run an experiment and save its output files."""
+    """Run an experiment with dataset-level checkpointing."""
     args = parse_arguments(arguments)
 
     config = load_config(args.config)
 
-    experiment_output = run_experiment(config)
+    experiment_name = config["experiment"]["name"]
 
-    saved_paths = save_experiment_output(
-        experiment_output=experiment_output,
+    run_directory = create_run_directory(
         output_directory=config["output"]["directory"],
-        experiment_name=config["experiment"]["name"],
+        experiment_name=experiment_name,
+    )
+
+    def write_dataset_checkpoint(
+        dataset_name: str,
+        experiment_output: dict[
+            str,
+            list[dict[str, Any]],
+        ],
+    ) -> None:
+        """Write cumulative output after a dataset completes."""
+        write_experiment_output(
+            experiment_output=experiment_output,
+            run_directory=run_directory,
+            experiment_name=experiment_name,
+            config=config,
+        )
+
+        print(
+            "Dataset checkpoint saved: "
+            f"{dataset_name}"
+        )
+
+    experiment_output = run_experiment(
+        config,
+        on_dataset_complete=write_dataset_checkpoint,
+    )
+
+    saved_paths = write_experiment_output(
+        experiment_output=experiment_output,
+        run_directory=run_directory,
+        experiment_name=experiment_name,
         config=config,
-)
+    )
 
     print(
         "Experiment completed successfully: "
-        f"{config['experiment']['name']}"
+        f"{experiment_name}"
     )
     print(
         "Result rows: "
