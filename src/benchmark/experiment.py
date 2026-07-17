@@ -1,7 +1,7 @@
 """Coordinate leakage-free XGB Benchmark experiments."""
 
 from time import perf_counter
-from typing import Any
+from typing import Any, Callable
 
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold
@@ -19,6 +19,14 @@ from benchmark.selection import (
     select_random_features,
     select_top_k,
 )
+
+
+ExperimentOutput = dict[str, list[dict[str, Any]]]
+
+DatasetCompleteCallback = Callable[
+    [str, ExperimentOutput],
+    None,
+]
 
 
 class ExperimentError(Exception):
@@ -274,6 +282,7 @@ def _build_ranking_rows(
 
     return rows
 
+
 def _build_selected_feature_rows(
     *,
     experiment_name: str,
@@ -316,14 +325,33 @@ def _build_selected_feature_rows(
     return rows
 
 
+def _build_experiment_output(
+    *,
+    results: list[dict[str, Any]],
+    ranking_rows: list[dict[str, Any]],
+    selected_feature_rows: list[dict[str, Any]],
+) -> ExperimentOutput:
+    """Build the cumulative experiment output structure."""
+    return {
+        "results": results,
+        "rankings": ranking_rows,
+        "selected_features": selected_feature_rows,
+    }
+
+
 def run_experiment(
     config: dict[str, Any],
-) -> dict[str, list[dict[str, Any]]]:
+    on_dataset_complete: DatasetCompleteCallback | None = None,
+) -> ExperimentOutput:
     """Run the complete leakage-free benchmark experiment.
 
     Feature ranking, feature selection, preprocessing, and model fitting
     use outer-training data only. Outer-test data are used only for
     prediction and metric calculation.
+
+    If provided, ``on_dataset_complete`` is called after each dataset
+    has been fully evaluated. The callback receives the dataset name and
+    the cumulative experiment output collected so far.
     """
     experiment_name = config["experiment"]["name"]
     base_seed = config["experiment"]["random_seed"]
@@ -398,16 +426,17 @@ def run_experiment(
             )
 
             ranking_time = perf_counter() - ranking_start
+
             for method, ranking in rankings.items():
                 ranking_rows.extend(
-            _build_ranking_rows(
-            experiment_name=experiment_name,
-            dataset_name=dataset_name,
-            outer_fold=outer_fold,
-            ranking_method=method,
-            ranking=ranking,
-        )
-    )
+                    _build_ranking_rows(
+                        experiment_name=experiment_name,
+                        dataset_name=dataset_name,
+                        outer_fold=outer_fold,
+                        ranking_method=method,
+                        ranking=ranking,
+                    )
+                )
 
             for method in ranking_methods:
                 ranking = rankings[method]
@@ -423,6 +452,7 @@ def run_experiment(
                             ]
                         ),
                     )
+
                     selected_feature_rows.extend(
                         _build_selected_feature_rows(
                             experiment_name=experiment_name,
@@ -430,18 +460,20 @@ def run_experiment(
                             outer_fold=outer_fold,
                             selection_method=method,
                             requested_percentage=float(
-                                 subset_info["requested_percentage"]
+                                subset_info[
+                                    "requested_percentage"
+                                ]
                             ),
                             actual_percentage=float(
-                                subset_info["actual_percentage"]
+                                subset_info[
+                                    "actual_percentage"
+                                ]
                             ),
                             random_repetition=None,
                             selected_features=selected_features,
                             ranking=ranking,
                         )
                     )
-
-
 
                     for model_name, model_config in model_variants:
                         model_seed = _derive_random_seed(
@@ -522,26 +554,25 @@ def run_experiment(
 
                     selected_feature_rows.extend(
                         _build_selected_feature_rows(
-                             experiment_name=experiment_name,
-                             dataset_name=dataset_name,
-                             outer_fold=outer_fold,
-                             selection_method="random",
-                             requested_percentage=float(
-                                 subset_info["requested_percentage"]
-                        ),
+                            experiment_name=experiment_name,
+                            dataset_name=dataset_name,
+                            outer_fold=outer_fold,
+                            selection_method="random",
+                            requested_percentage=float(
+                                subset_info[
+                                    "requested_percentage"
+                                ]
+                            ),
                             actual_percentage=float(
-                             subset_info["actual_percentage"]
-                        ),
+                                subset_info[
+                                    "actual_percentage"
+                                ]
+                            ),
                             random_repetition=repetition + 1,
                             selected_features=selected_features,
                             ranking=None,
                         )
                     )
-
-
-
-
-
 
                     for model_name, model_config in model_variants:
                         (
@@ -605,8 +636,6 @@ def run_experiment(
                 )
             )
 
-
-
             for model_name, model_config in model_variants:
                 (
                     metrics,
@@ -643,8 +672,20 @@ def run_experiment(
                     )
                 )
 
-    return {
-    "results": results,
-    "rankings": ranking_rows,
-    "selected_features": selected_feature_rows,
-    }
+        experiment_output = _build_experiment_output(
+            results=results,
+            ranking_rows=ranking_rows,
+            selected_feature_rows=selected_feature_rows,
+        )
+
+        if on_dataset_complete is not None:
+            on_dataset_complete(
+                dataset_name,
+                experiment_output,
+            )
+
+    return _build_experiment_output(
+        results=results,
+        ranking_rows=ranking_rows,
+        selected_feature_rows=selected_feature_rows,
+    )

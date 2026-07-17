@@ -428,3 +428,102 @@ def test_run_experiment_ranking_features_are_unique(
 
         assert len(features) == 30
         assert len(set(features)) == 30
+
+
+def test_run_experiment_calls_callback_after_dataset(
+    smoke_config: dict[str, Any],
+) -> None:
+    """Call the completion callback once after a dataset finishes."""
+    callback_calls: list[
+        tuple[
+            str,
+            dict[str, list[dict[str, Any]]],
+        ]
+    ] = []
+
+    def on_dataset_complete(
+        dataset_name: str,
+        output: dict[str, list[dict[str, Any]]],
+    ) -> None:
+        callback_calls.append(
+            (
+                dataset_name,
+                deepcopy(output),
+            )
+        )
+
+    final_output = run_experiment(
+        smoke_config,
+        on_dataset_complete=on_dataset_complete,
+    )
+
+    assert len(callback_calls) == 1
+
+    dataset_name, callback_output = callback_calls[0]
+
+    assert dataset_name == "breast_cancer_wisconsin"
+    assert callback_output == final_output
+
+
+def test_run_experiment_callback_receives_cumulative_output(
+    smoke_config: dict[str, Any],
+) -> None:
+    """Provide cumulative results after each completed dataset."""
+    config = deepcopy(smoke_config)
+
+    config["datasets"]["steel_plates_faults"][
+        "enabled"
+    ] = True
+
+    callback_calls: list[
+        tuple[
+            str,
+            dict[str, list[dict[str, Any]]],
+        ]
+    ] = []
+
+    def on_dataset_complete(
+        dataset_name: str,
+        output: dict[str, list[dict[str, Any]]],
+    ) -> None:
+        callback_calls.append(
+            (
+                dataset_name,
+                deepcopy(output),
+            )
+        )
+
+    final_output = run_experiment(
+        config,
+        on_dataset_complete=on_dataset_complete,
+    )
+
+    assert [
+        dataset_name
+        for dataset_name, _ in callback_calls
+    ] == [
+        "breast_cancer_wisconsin",
+        "steel_plates_faults",
+    ]
+
+    first_output = callback_calls[0][1]
+    second_output = callback_calls[1][1]
+
+    assert {
+        row["dataset"]
+        for row in first_output["results"]
+    } == {"breast_cancer_wisconsin"}
+
+    assert {
+        row["dataset"]
+        for row in second_output["results"]
+    } == {
+        "breast_cancer_wisconsin",
+        "steel_plates_faults",
+    }
+
+    assert len(second_output["results"]) > len(
+        first_output["results"]
+    )
+
+    assert second_output == final_output
