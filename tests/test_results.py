@@ -9,9 +9,11 @@ import pytest
 
 from benchmark.results import (
     ResultError,
+    load_progress,
     results_to_frame,
     save_experiment_output,
     save_results,
+    write_progress,
 )
 
 
@@ -473,3 +475,266 @@ def test_save_experiment_output_rejects_non_dictionary(
             experiment_name="smoke_test",
             config=sample_config,
         )
+
+def test_write_progress_creates_progress_file(
+    tmp_path: Path,
+) -> None:
+    """Write dataset completion progress as JSON."""
+    progress_path = write_progress(
+        run_directory=tmp_path,
+        experiment_name="smoke_test",
+        completed_datasets=[
+            "breast_cancer_wisconsin",
+            "steel_plates_faults",
+        ],
+    )
+
+    assert progress_path == tmp_path / "progress.json"
+    assert progress_path.is_file()
+
+
+def test_write_progress_writes_expected_content(
+    tmp_path: Path,
+) -> None:
+    """Write experiment and completed dataset information."""
+    progress_path = write_progress(
+        run_directory=tmp_path,
+        experiment_name="smoke_test",
+        completed_datasets=[
+            "breast_cancer_wisconsin",
+        ],
+    )
+
+    with progress_path.open(
+        "r",
+        encoding="utf-8",
+    ) as progress_file:
+        progress = json.load(progress_file)
+
+    assert progress["experiment"] == "smoke_test"
+    assert progress["completed_datasets"] == [
+        "breast_cancer_wisconsin",
+    ]
+    assert isinstance(
+        progress["last_updated_utc"],
+        str,
+    )
+    assert progress["last_updated_utc"]
+
+
+def test_write_progress_overwrites_existing_progress(
+    tmp_path: Path,
+) -> None:
+    """Replace progress with the latest completed datasets."""
+    write_progress(
+        run_directory=tmp_path,
+        experiment_name="smoke_test",
+        completed_datasets=[
+            "breast_cancer_wisconsin",
+        ],
+    )
+
+    progress_path = write_progress(
+        run_directory=tmp_path,
+        experiment_name="smoke_test",
+        completed_datasets=[
+            "breast_cancer_wisconsin",
+            "steel_plates_faults",
+        ],
+    )
+
+    with progress_path.open(
+        "r",
+        encoding="utf-8",
+    ) as progress_file:
+        progress = json.load(progress_file)
+
+    assert progress["completed_datasets"] == [
+        "breast_cancer_wisconsin",
+        "steel_plates_faults",
+    ]
+
+
+def test_write_progress_allows_no_completed_datasets(
+    tmp_path: Path,
+) -> None:
+    """Allow progress to represent a newly created run."""
+    progress_path = write_progress(
+        run_directory=tmp_path,
+        experiment_name="smoke_test",
+        completed_datasets=[],
+    )
+
+    progress = load_progress(tmp_path)
+
+    assert progress_path.is_file()
+    assert progress["completed_datasets"] == []
+
+
+@pytest.mark.parametrize(
+    "experiment_name",
+    [
+        "",
+        "   ",
+        42,
+        None,
+    ],
+)
+def test_write_progress_rejects_invalid_experiment_name(
+    tmp_path: Path,
+    experiment_name: object,
+) -> None:
+    """Require a non-empty experiment name."""
+    with pytest.raises(
+        ResultError,
+        match="experiment_name must be a non-empty string",
+    ):
+        write_progress(
+            run_directory=tmp_path,
+            experiment_name=experiment_name,  # type: ignore[arg-type]
+            completed_datasets=[],
+        )
+
+
+@pytest.mark.parametrize(
+    "completed_datasets",
+    [
+        "sample_dataset",
+        [""],
+        ["   "],
+        [42],
+        ["sample_dataset", "sample_dataset"],
+    ],
+)
+def test_write_progress_rejects_invalid_completed_datasets(
+    tmp_path: Path,
+    completed_datasets: object,
+) -> None:
+    """Require unique, non-empty dataset names."""
+    with pytest.raises(ResultError):
+        write_progress(
+            run_directory=tmp_path,
+            experiment_name="smoke_test",
+            completed_datasets=completed_datasets,  # type: ignore[arg-type]
+        )
+
+
+def test_write_progress_rejects_missing_run_directory(
+    tmp_path: Path,
+) -> None:
+    """Require an existing run directory."""
+    missing_directory = tmp_path / "missing"
+
+    with pytest.raises(
+        ResultError,
+        match="Run directory does not exist",
+    ):
+        write_progress(
+            run_directory=missing_directory,
+            experiment_name="smoke_test",
+            completed_datasets=[],
+        )
+
+
+def test_load_progress_returns_saved_progress(
+    tmp_path: Path,
+) -> None:
+    """Load valid progress from a run directory."""
+    write_progress(
+        run_directory=tmp_path,
+        experiment_name="smoke_test",
+        completed_datasets=[
+            "breast_cancer_wisconsin",
+        ],
+    )
+
+    progress = load_progress(tmp_path)
+
+    assert progress["experiment"] == "smoke_test"
+    assert progress["completed_datasets"] == [
+        "breast_cancer_wisconsin",
+    ]
+    assert progress["last_updated_utc"]
+
+
+def test_load_progress_rejects_missing_progress_file(
+    tmp_path: Path,
+) -> None:
+    """Require progress.json to exist."""
+    with pytest.raises(
+        ResultError,
+        match="Progress file does not exist",
+    ):
+        load_progress(tmp_path)
+
+
+def test_load_progress_rejects_invalid_json(
+    tmp_path: Path,
+) -> None:
+    """Reject malformed progress JSON."""
+    progress_path = tmp_path / "progress.json"
+    progress_path.write_text(
+        "{invalid",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(
+        ResultError,
+        match="invalid JSON",
+    ):
+        load_progress(tmp_path)
+
+
+def test_load_progress_rejects_non_object_json(
+    tmp_path: Path,
+) -> None:
+    """Require progress JSON to contain an object."""
+    progress_path = tmp_path / "progress.json"
+    progress_path.write_text(
+        '["sample_dataset"]',
+        encoding="utf-8",
+    )
+
+    with pytest.raises(
+        ResultError,
+        match="must contain a JSON object",
+    ):
+        load_progress(tmp_path)
+
+
+@pytest.mark.parametrize(
+    "missing_field",
+    [
+        "experiment",
+        "completed_datasets",
+        "last_updated_utc",
+    ],
+)
+def test_load_progress_rejects_missing_required_fields(
+    tmp_path: Path,
+    missing_field: str,
+) -> None:
+    """Require all progress fields."""
+    progress = {
+        "experiment": "smoke_test",
+        "completed_datasets": [],
+        "last_updated_utc": (
+            "2026-07-17T18:30:15+00:00"
+        ),
+    }
+
+    del progress[missing_field]
+
+    progress_path = tmp_path / "progress.json"
+
+    with progress_path.open(
+        "w",
+        encoding="utf-8",
+    ) as progress_file:
+        json.dump(progress, progress_file)
+
+    with pytest.raises(
+        ResultError,
+        match="missing required fields",
+    ):
+        load_progress(tmp_path)

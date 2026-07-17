@@ -319,3 +319,173 @@ def save_experiment_output(
         experiment_name=experiment_name,
         config=config,
     )
+
+def _validate_completed_datasets(
+    completed_datasets: object,
+) -> list[str]:
+    """Validate and return completed dataset names."""
+    if not isinstance(completed_datasets, list):
+        raise ResultError(
+            "completed_datasets must be provided as a list."
+        )
+
+    if not all(
+        isinstance(dataset_name, str)
+        and dataset_name.strip()
+        for dataset_name in completed_datasets
+    ):
+        raise ResultError(
+            "Every completed dataset name must be a "
+            "non-empty string."
+        )
+
+    if len(completed_datasets) != len(
+        set(completed_datasets)
+    ):
+        raise ResultError(
+            "completed_datasets must not contain duplicates."
+        )
+
+    return completed_datasets
+
+
+def write_progress(
+    *,
+    run_directory: str | Path,
+    experiment_name: str,
+    completed_datasets: list[str],
+) -> Path:
+    """Write dataset completion progress for an experiment run."""
+    if (
+        not isinstance(experiment_name, str)
+        or not experiment_name.strip()
+    ):
+        raise ResultError(
+            "experiment_name must be a non-empty string."
+        )
+
+    validated_datasets = _validate_completed_datasets(
+        completed_datasets
+    )
+
+    run_directory = Path(run_directory)
+
+    if not run_directory.is_dir():
+        raise ResultError(
+            f"Run directory does not exist: '{run_directory}'."
+        )
+
+    progress_path = run_directory / "progress.json"
+
+    progress = {
+        "experiment": experiment_name,
+        "completed_datasets": validated_datasets,
+        "last_updated_utc": datetime.now(
+            timezone.utc
+        ).isoformat(),
+    }
+
+    try:
+        with progress_path.open(
+            "w",
+            encoding="utf-8",
+        ) as progress_file:
+            json.dump(
+                progress,
+                progress_file,
+                indent=2,
+                ensure_ascii=False,
+            )
+    except OSError as error:
+        raise ResultError(
+            f"Could not write experiment progress to "
+            f"'{progress_path}': {error}"
+        ) from error
+
+    return progress_path
+
+
+def load_progress(
+    run_directory: str | Path,
+) -> dict[str, Any]:
+    """Load and validate dataset completion progress."""
+    run_directory = Path(run_directory)
+
+    if not run_directory.is_dir():
+        raise ResultError(
+            f"Run directory does not exist: '{run_directory}'."
+        )
+
+    progress_path = run_directory / "progress.json"
+
+    if not progress_path.is_file():
+        raise ResultError(
+            f"Progress file does not exist: '{progress_path}'."
+        )
+
+    try:
+        with progress_path.open(
+            "r",
+            encoding="utf-8",
+        ) as progress_file:
+            progress = json.load(progress_file)
+    except OSError as error:
+        raise ResultError(
+            f"Could not read experiment progress from "
+            f"'{progress_path}': {error}"
+        ) from error
+    except json.JSONDecodeError as error:
+        raise ResultError(
+            f"Progress file contains invalid JSON: "
+            f"'{progress_path}'."
+        ) from error
+
+    if not isinstance(progress, dict):
+        raise ResultError(
+            "Progress file must contain a JSON object."
+        )
+
+    required_fields = {
+        "experiment",
+        "completed_datasets",
+        "last_updated_utc",
+    }
+
+    missing_fields = required_fields - set(progress)
+
+    if missing_fields:
+        missing_fields_text = ", ".join(
+            sorted(missing_fields)
+        )
+
+        raise ResultError(
+            "Progress file is missing required fields: "
+            f"{missing_fields_text}."
+        )
+
+    experiment_name = progress["experiment"]
+
+    if (
+        not isinstance(experiment_name, str)
+        or not experiment_name.strip()
+    ):
+        raise ResultError(
+            "Progress experiment must be a non-empty string."
+        )
+
+    _validate_completed_datasets(
+        progress["completed_datasets"]
+    )
+
+    last_updated_utc = progress["last_updated_utc"]
+
+    if (
+        not isinstance(last_updated_utc, str)
+        or not last_updated_utc.strip()
+    ):
+        raise ResultError(
+            "Progress last_updated_utc must be a "
+            "non-empty string."
+        )
+
+    return progress
