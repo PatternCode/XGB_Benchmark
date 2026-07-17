@@ -9,6 +9,7 @@ from benchmark.experiment import run_experiment
 from benchmark.results import (
     create_run_directory,
     write_experiment_output,
+    write_progress,
 )
 
 
@@ -45,6 +46,8 @@ def main(
         experiment_name=experiment_name,
     )
 
+    completed_datasets: list[str] = []
+
     def write_dataset_checkpoint(
         dataset_name: str,
         experiment_output: dict[
@@ -58,6 +61,14 @@ def main(
             run_directory=run_directory,
             experiment_name=experiment_name,
             config=config,
+        )
+
+        completed_datasets.append(dataset_name)
+
+        write_progress(
+            run_directory=run_directory,
+            experiment_name=experiment_name,
+            completed_datasets=completed_datasets,
         )
 
         print(
