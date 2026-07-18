@@ -29,7 +29,7 @@ transformations:
 - remove zero-variance features
 - retain one representative from each group of exactly duplicate features
 - encode target labels as consecutive integers
-- preserve categorical predictors without encoding
+- encode categorical predictors as deterministic consecutive integers
 - save detailed preparation metadata
 
 It intentionally does not perform imputation, scaling, normalization,
@@ -57,7 +57,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 RAW_DIR = PROJECT_ROOT / "data" / "raw"
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 
-PREPARATION_VERSION = "1.0"
+PREPARATION_VERSION = "1.1"
 
 MISSING_TOKENS = {
     "",
@@ -432,6 +432,59 @@ def encode_target(
     return encoded.astype("int64"), mapping
 
 
+def encode_categorical_features(
+    X: pd.DataFrame,
+    categorical_features: list[str],
+) -> tuple[pd.DataFrame, dict[str, list[dict[str, Any]]]]:
+    """Encode categorical predictors deterministically.
+
+    Each categorical feature is encoded using consecutive integer values
+    starting at zero. Categories are sorted deterministically before codes are
+    assigned. Missing values remain missing and are not treated as categories.
+
+    The returned mappings preserve the original category values so that the
+    canonical representation is fully reproducible and auditable.
+    """
+    encoded_X = X.copy()
+    feature_mappings: dict[str, list[dict[str, Any]]] = {}
+
+    for column in categorical_features:
+        original = encoded_X[column]
+        categories = sorted_labels(original)
+        mapping = {
+            category: encoded_value
+            for encoded_value, category in enumerate(categories)
+        }
+
+        encoded = original.map(mapping)
+        unmapped_mask = original.notna() & encoded.isna()
+
+        if unmapped_mask.any():
+            unmapped_values = sorted_labels(original.loc[unmapped_mask])
+            raise ValueError(
+                f"Unmapped categorical values detected in '{column}': "
+                f"{unmapped_values}"
+            )
+
+        if encoded.isna().any():
+            encoded_X[column] = encoded.astype("Int64")
+        else:
+            encoded_X[column] = encoded.astype("int64")
+
+        feature_mappings[column] = [
+            {
+                "original_value": to_python_scalar(category),
+                "encoded_value": int(encoded_value),
+            }
+            for category, encoded_value in sorted(
+                mapping.items(),
+                key=lambda item: item[1],
+            )
+        ]
+
+    return encoded_X, feature_mappings
+
+
 def find_binary_indicator_features(X: pd.DataFrame) -> list[str]:
     """Return numeric or Boolean features whose observed values are only 0/1."""
     binary_features: list[str] = []
@@ -504,14 +557,17 @@ def build_processed_metadata(
     processed_rows: int,
     raw_feature_count: int,
     X: pd.DataFrame,
+    feature_types: dict[str, list[str]],
+    categorical_feature_mappings: dict[
+        str,
+        list[dict[str, Any]],
+    ],
     removed_zero_variance: list[str],
     removed_duplicate_groups: list[dict[str, Any]],
     rows_removed_missing_target: int,
     infinite_values_replaced: int,
 ) -> dict[str, Any]:
     """Create fully traceable metadata for one processed dataset."""
-    feature_types = identify_feature_types(X)
-
     return {
         "preparation_version": PREPARATION_VERSION,
         "dataset_key": dataset_key,
@@ -534,6 +590,12 @@ def build_processed_metadata(
         "num_features_processed": int(X.shape[1]),
         "feature_names": list(X.columns),
         **feature_types,
+        "categorical_feature_mappings": categorical_feature_mappings,
+        "categorical_encoding": {
+            "strategy": "deterministic_consecutive_integer_encoding",
+            "starts_at": 0,
+            "missing_values_encoded": False,
+        },
         "removed_zero_variance_features": removed_zero_variance,
         "removed_duplicate_features": removed_duplicate_groups,
         "rows_removed_missing_target": rows_removed_missing_target,
@@ -602,6 +664,13 @@ def prepare_dataset(
         remove_redundant_features(X)
     )
 
+    feature_types = identify_feature_types(X)
+
+    X, categorical_feature_mappings = encode_categorical_features(
+        X,
+        feature_types["categorical_features"],
+    )
+
     y_encoded, target_mapping = encode_target(
         y,
         explicit_mapping=config.get("target_mapping"),
@@ -629,6 +698,8 @@ def prepare_dataset(
         processed_rows=int(processed_df.shape[0]),
         raw_feature_count=raw_feature_count,
         X=X,
+        feature_types=feature_types,
+        categorical_feature_mappings=categorical_feature_mappings,
         removed_zero_variance=removed_zero_variance,
         removed_duplicate_groups=removed_duplicate_groups,
         rows_removed_missing_target=rows_removed_missing_target,

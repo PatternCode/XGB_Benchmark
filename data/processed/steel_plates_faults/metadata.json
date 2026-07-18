@@ -1,5 +1,5 @@
 {
-  "preparation_version": "1.0",
+  "preparation_version": "1.1",
   "dataset_key": "steel_plates_faults",
   "dataset_name": "Steel Plates Faults",
   "domain": "manufacturing",
@@ -223,6 +223,12 @@
     "type_of_steel_a300",
     "type_of_steel_a400"
   ],
+  "categorical_feature_mappings": {},
+  "categorical_encoding": {
+    "strategy": "deterministic_consecutive_integer_encoding",
+    "starts_at": 0,
+    "missing_values_encoded": false
+  },
   "removed_zero_variance_features": [],
   "removed_duplicate_features": [],
   "rows_removed_missing_target": 0,

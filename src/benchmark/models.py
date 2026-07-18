@@ -6,13 +6,15 @@ import numpy as np
 import pandas as pd
 import xgboost as xgb
 from sklearn.base import BaseEstimator
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.pipeline import Pipeline
+
 
 SUPPORTED_MODELS = {
     "decision_tree",
@@ -105,6 +107,71 @@ def _validate_target_labels(y_train: pd.Series) -> int:
     return n_classes
 
 
+def _validate_feature_types(
+    X_train: pd.DataFrame,
+    numeric_features: list[str],
+    categorical_features: list[str],
+) -> None:
+    """Validate feature-type lists for the selected feature subset."""
+    if not isinstance(numeric_features, list):
+        raise ModelError(
+            "numeric_features must be a list."
+        )
+
+    if not isinstance(categorical_features, list):
+        raise ModelError(
+            "categorical_features must be a list."
+        )
+
+    for field_name, feature_names in (
+        ("numeric_features", numeric_features),
+        ("categorical_features", categorical_features),
+    ):
+        if any(
+            not isinstance(feature_name, str) or not feature_name
+            for feature_name in feature_names
+        ):
+            raise ModelError(
+                f"{field_name} must contain only non-empty strings."
+            )
+
+        if len(feature_names) != len(set(feature_names)):
+            raise ModelError(
+                f"{field_name} contains duplicate feature names."
+            )
+
+    overlap = sorted(
+        set(numeric_features).intersection(categorical_features)
+    )
+
+    if overlap:
+        raise ModelError(
+            "numeric_features and categorical_features overlap: "
+            f"{overlap}"
+        )
+
+    classified_features = numeric_features + categorical_features
+    unknown_features = sorted(
+        set(classified_features).difference(X_train.columns)
+    )
+
+    if unknown_features:
+        raise ModelError(
+            "Feature-type lists contain columns that are not present "
+            f"in X_train: {unknown_features}"
+        )
+
+    missing_features = sorted(
+        set(X_train.columns).difference(classified_features)
+    )
+
+    if missing_features:
+        raise ModelError(
+            "Feature-type lists do not classify all columns in "
+            f"X_train: {missing_features}"
+        )
+
+
 def _positive_integer(
     config: dict[str, Any],
     key: str,
@@ -126,12 +193,53 @@ def _positive_integer(
     return value
 
 
+def _build_preprocessor(
+    numeric_features: list[str],
+    categorical_features: list[str],
+) -> ColumnTransformer:
+    """Build fold-local imputers for numeric and categorical features."""
+    transformers: list[
+        tuple[str, SimpleImputer, list[str]]
+    ] = []
+
+    if numeric_features:
+        transformers.append(
+            (
+                "numeric_imputer",
+                SimpleImputer(strategy="median"),
+                numeric_features,
+            )
+        )
+
+    if categorical_features:
+        transformers.append(
+            (
+                "categorical_imputer",
+                SimpleImputer(strategy="most_frequent"),
+                categorical_features,
+            )
+        )
+
+    return ColumnTransformer(
+        transformers=transformers,
+        remainder="drop",
+        verbose_feature_names_out=False,
+    )
+
+
 def _build_sklearn_model(
     model_name: str,
     model_config: dict[str, Any],
     random_seed: int,
+    numeric_features: list[str],
+    categorical_features: list[str],
 ) -> BaseEstimator:
-    """Construct one unfitted scikit-learn estimator or pipeline."""
+    """Construct one unfitted scikit-learn preprocessing pipeline."""
+    preprocessor = _build_preprocessor(
+        numeric_features=numeric_features,
+        categorical_features=categorical_features,
+    )
+
     if model_name == "decision_tree":
         max_depth = model_config.get("max_depth")
 
@@ -148,9 +256,17 @@ def _build_sklearn_model(
                 "a positive integer."
             )
 
-        return DecisionTreeClassifier(
-            max_depth=max_depth,
-            random_state=random_seed,
+        return Pipeline(
+            steps=[
+                ("preprocessor", preprocessor),
+                (
+                    "model",
+                    DecisionTreeClassifier(
+                        max_depth=max_depth,
+                        random_state=random_seed,
+                    ),
+                ),
+            ]
         )
 
     if model_name == "knn":
@@ -162,6 +278,7 @@ def _build_sklearn_model(
 
         return Pipeline(
             steps=[
+                ("preprocessor", preprocessor),
                 ("scaler", StandardScaler()),
                 (
                     "model",
@@ -181,6 +298,7 @@ def _build_sklearn_model(
 
         return Pipeline(
             steps=[
+                ("preprocessor", preprocessor),
                 ("scaler", StandardScaler()),
                 (
                     "model",
@@ -220,6 +338,7 @@ def _build_sklearn_model(
 
         return Pipeline(
             steps=[
+                ("preprocessor", preprocessor),
                 ("scaler", StandardScaler()),
                 (
                     "model",
@@ -294,6 +413,8 @@ def train_model(
     model_name: str,
     model_config: dict[str, Any],
     random_seed: int,
+    numeric_features: list[str],
+    categorical_features: list[str],
 ) -> BaseEstimator | xgb.Booster:
     """Train one downstream classification model.
 
@@ -309,12 +430,15 @@ def train_model(
         Configuration for the requested model.
     random_seed
         Seed used by stochastic models.
+    numeric_features
+        Selected features that must use median imputation.
+    categorical_features
+        Selected features that must use most-frequent imputation.
 
     Returns
     -------
     BaseEstimator | xgb.Booster
-        Fitted scikit-learn estimator, fitted pipeline, or native
-        XGBoost Booster.
+        Fitted scikit-learn pipeline or native XGBoost Booster.
 
     Raises
     ------
@@ -342,6 +466,12 @@ def train_model(
         )
 
     _validate_target_labels(y_train)
+
+    _validate_feature_types(
+        X_train=X_train,
+        numeric_features=numeric_features,
+        categorical_features=categorical_features,
+    )
 
     if model_name == "xgboost":
         parameters, num_boost_round = (
@@ -373,6 +503,8 @@ def train_model(
         model_name=model_name,
         model_config=model_config,
         random_seed=random_seed,
+        numeric_features=numeric_features,
+        categorical_features=categorical_features,
     )
 
     try:
@@ -498,6 +630,7 @@ def predict_model(
 
     return predictions.astype(int), probabilities
 
+
 def get_model_complexity(
     model: BaseEstimator | xgb.Booster,
 ) -> dict[str, int | None]:
@@ -517,7 +650,17 @@ def get_model_complexity(
         Realised depth, number of leaves, number of nodes, and number of
         features used by a fitted decision tree.
     """
-    if not isinstance(model, DecisionTreeClassifier):
+    decision_tree: DecisionTreeClassifier | None = None
+
+    if isinstance(model, DecisionTreeClassifier):
+        decision_tree = model
+    elif isinstance(model, Pipeline):
+        fitted_model = model.named_steps.get("model")
+
+        if isinstance(fitted_model, DecisionTreeClassifier):
+            decision_tree = fitted_model
+
+    if decision_tree is None:
         return {
             "actual_tree_depth": None,
             "n_tree_leaves": None,
@@ -525,15 +668,15 @@ def get_model_complexity(
             "n_tree_features_used": None,
         }
 
-    used_feature_indices = model.tree_.feature
+    used_feature_indices = decision_tree.tree_.feature
     used_feature_indices = used_feature_indices[
         used_feature_indices >= 0
     ]
 
     return {
-        "actual_tree_depth": int(model.get_depth()),
-        "n_tree_leaves": int(model.get_n_leaves()),
-        "n_tree_nodes": int(model.tree_.node_count),
+        "actual_tree_depth": int(decision_tree.get_depth()),
+        "n_tree_leaves": int(decision_tree.get_n_leaves()),
+        "n_tree_nodes": int(decision_tree.tree_.node_count),
         "n_tree_features_used": int(
             len(np.unique(used_feature_indices))
         ),

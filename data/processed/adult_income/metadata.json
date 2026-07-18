@@ -1,5 +1,5 @@
 {
-  "preparation_version": "1.0",
+  "preparation_version": "1.1",
   "dataset_key": "adult_income",
   "dataset_name": "Adult Income",
   "domain": "census",
@@ -8,7 +8,7 @@
   "source_file": "data/raw/adult_income/data.csv",
   "source_sha256": "8f970e20c9991979ec0a9ccb65ce97543d678709a2c6f8ef23f7fb32f40adddc",
   "processed_file": "data/processed/adult_income/data.csv",
-  "processed_sha256": "66891c8324d11287caa2063a8a537f20bfca580d42cdda2e6f59b34036301bc8",
+  "processed_sha256": "b1af4f138cfa9bf25b8f0bc1581fa4124ec27c503f5412224e0696b9790a761a",
   "original_target_column": "class",
   "standardized_original_target_column": "class",
   "target_column": "target",
@@ -123,6 +123,425 @@
     "native_country"
   ],
   "binary_indicator_features": [],
+  "categorical_feature_mappings": {
+    "workclass": [
+      {
+        "original_value": "Federal-gov",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "Local-gov",
+        "encoded_value": 1
+      },
+      {
+        "original_value": "Never-worked",
+        "encoded_value": 2
+      },
+      {
+        "original_value": "Private",
+        "encoded_value": 3
+      },
+      {
+        "original_value": "Self-emp-inc",
+        "encoded_value": 4
+      },
+      {
+        "original_value": "Self-emp-not-inc",
+        "encoded_value": 5
+      },
+      {
+        "original_value": "State-gov",
+        "encoded_value": 6
+      },
+      {
+        "original_value": "Without-pay",
+        "encoded_value": 7
+      }
+    ],
+    "education": [
+      {
+        "original_value": "10th",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "11th",
+        "encoded_value": 1
+      },
+      {
+        "original_value": "12th",
+        "encoded_value": 2
+      },
+      {
+        "original_value": "1st-4th",
+        "encoded_value": 3
+      },
+      {
+        "original_value": "5th-6th",
+        "encoded_value": 4
+      },
+      {
+        "original_value": "7th-8th",
+        "encoded_value": 5
+      },
+      {
+        "original_value": "9th",
+        "encoded_value": 6
+      },
+      {
+        "original_value": "Assoc-acdm",
+        "encoded_value": 7
+      },
+      {
+        "original_value": "Assoc-voc",
+        "encoded_value": 8
+      },
+      {
+        "original_value": "Bachelors",
+        "encoded_value": 9
+      },
+      {
+        "original_value": "Doctorate",
+        "encoded_value": 10
+      },
+      {
+        "original_value": "HS-grad",
+        "encoded_value": 11
+      },
+      {
+        "original_value": "Masters",
+        "encoded_value": 12
+      },
+      {
+        "original_value": "Preschool",
+        "encoded_value": 13
+      },
+      {
+        "original_value": "Prof-school",
+        "encoded_value": 14
+      },
+      {
+        "original_value": "Some-college",
+        "encoded_value": 15
+      }
+    ],
+    "marital_status": [
+      {
+        "original_value": "Divorced",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "Married-AF-spouse",
+        "encoded_value": 1
+      },
+      {
+        "original_value": "Married-civ-spouse",
+        "encoded_value": 2
+      },
+      {
+        "original_value": "Married-spouse-absent",
+        "encoded_value": 3
+      },
+      {
+        "original_value": "Never-married",
+        "encoded_value": 4
+      },
+      {
+        "original_value": "Separated",
+        "encoded_value": 5
+      },
+      {
+        "original_value": "Widowed",
+        "encoded_value": 6
+      }
+    ],
+    "occupation": [
+      {
+        "original_value": "Adm-clerical",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "Armed-Forces",
+        "encoded_value": 1
+      },
+      {
+        "original_value": "Craft-repair",
+        "encoded_value": 2
+      },
+      {
+        "original_value": "Exec-managerial",
+        "encoded_value": 3
+      },
+      {
+        "original_value": "Farming-fishing",
+        "encoded_value": 4
+      },
+      {
+        "original_value": "Handlers-cleaners",
+        "encoded_value": 5
+      },
+      {
+        "original_value": "Machine-op-inspct",
+        "encoded_value": 6
+      },
+      {
+        "original_value": "Other-service",
+        "encoded_value": 7
+      },
+      {
+        "original_value": "Priv-house-serv",
+        "encoded_value": 8
+      },
+      {
+        "original_value": "Prof-specialty",
+        "encoded_value": 9
+      },
+      {
+        "original_value": "Protective-serv",
+        "encoded_value": 10
+      },
+      {
+        "original_value": "Sales",
+        "encoded_value": 11
+      },
+      {
+        "original_value": "Tech-support",
+        "encoded_value": 12
+      },
+      {
+        "original_value": "Transport-moving",
+        "encoded_value": 13
+      }
+    ],
+    "relationship": [
+      {
+        "original_value": "Husband",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "Not-in-family",
+        "encoded_value": 1
+      },
+      {
+        "original_value": "Other-relative",
+        "encoded_value": 2
+      },
+      {
+        "original_value": "Own-child",
+        "encoded_value": 3
+      },
+      {
+        "original_value": "Unmarried",
+        "encoded_value": 4
+      },
+      {
+        "original_value": "Wife",
+        "encoded_value": 5
+      }
+    ],
+    "race": [
+      {
+        "original_value": "Amer-Indian-Eskimo",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "Asian-Pac-Islander",
+        "encoded_value": 1
+      },
+      {
+        "original_value": "Black",
+        "encoded_value": 2
+      },
+      {
+        "original_value": "Other",
+        "encoded_value": 3
+      },
+      {
+        "original_value": "White",
+        "encoded_value": 4
+      }
+    ],
+    "sex": [
+      {
+        "original_value": "Female",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "Male",
+        "encoded_value": 1
+      }
+    ],
+    "native_country": [
+      {
+        "original_value": "Cambodia",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "Canada",
+        "encoded_value": 1
+      },
+      {
+        "original_value": "China",
+        "encoded_value": 2
+      },
+      {
+        "original_value": "Columbia",
+        "encoded_value": 3
+      },
+      {
+        "original_value": "Cuba",
+        "encoded_value": 4
+      },
+      {
+        "original_value": "Dominican-Republic",
+        "encoded_value": 5
+      },
+      {
+        "original_value": "Ecuador",
+        "encoded_value": 6
+      },
+      {
+        "original_value": "El-Salvador",
+        "encoded_value": 7
+      },
+      {
+        "original_value": "England",
+        "encoded_value": 8
+      },
+      {
+        "original_value": "France",
+        "encoded_value": 9
+      },
+      {
+        "original_value": "Germany",
+        "encoded_value": 10
+      },
+      {
+        "original_value": "Greece",
+        "encoded_value": 11
+      },
+      {
+        "original_value": "Guatemala",
+        "encoded_value": 12
+      },
+      {
+        "original_value": "Haiti",
+        "encoded_value": 13
+      },
+      {
+        "original_value": "Holand-Netherlands",
+        "encoded_value": 14
+      },
+      {
+        "original_value": "Honduras",
+        "encoded_value": 15
+      },
+      {
+        "original_value": "Hong",
+        "encoded_value": 16
+      },
+      {
+        "original_value": "Hungary",
+        "encoded_value": 17
+      },
+      {
+        "original_value": "India",
+        "encoded_value": 18
+      },
+      {
+        "original_value": "Iran",
+        "encoded_value": 19
+      },
+      {
+        "original_value": "Ireland",
+        "encoded_value": 20
+      },
+      {
+        "original_value": "Italy",
+        "encoded_value": 21
+      },
+      {
+        "original_value": "Jamaica",
+        "encoded_value": 22
+      },
+      {
+        "original_value": "Japan",
+        "encoded_value": 23
+      },
+      {
+        "original_value": "Laos",
+        "encoded_value": 24
+      },
+      {
+        "original_value": "Mexico",
+        "encoded_value": 25
+      },
+      {
+        "original_value": "Nicaragua",
+        "encoded_value": 26
+      },
+      {
+        "original_value": "Outlying-US(Guam-USVI-etc)",
+        "encoded_value": 27
+      },
+      {
+        "original_value": "Peru",
+        "encoded_value": 28
+      },
+      {
+        "original_value": "Philippines",
+        "encoded_value": 29
+      },
+      {
+        "original_value": "Poland",
+        "encoded_value": 30
+      },
+      {
+        "original_value": "Portugal",
+        "encoded_value": 31
+      },
+      {
+        "original_value": "Puerto-Rico",
+        "encoded_value": 32
+      },
+      {
+        "original_value": "Scotland",
+        "encoded_value": 33
+      },
+      {
+        "original_value": "South",
+        "encoded_value": 34
+      },
+      {
+        "original_value": "Taiwan",
+        "encoded_value": 35
+      },
+      {
+        "original_value": "Thailand",
+        "encoded_value": 36
+      },
+      {
+        "original_value": "Trinadad&Tobago",
+        "encoded_value": 37
+      },
+      {
+        "original_value": "United-States",
+        "encoded_value": 38
+      },
+      {
+        "original_value": "Vietnam",
+        "encoded_value": 39
+      },
+      {
+        "original_value": "Yugoslavia",
+        "encoded_value": 40
+      }
+    ]
+  },
+  "categorical_encoding": {
+    "strategy": "deterministic_consecutive_integer_encoding",
+    "starts_at": 0,
+    "missing_values_encoded": false
+  },
   "removed_zero_variance_features": [],
   "removed_duplicate_features": [],
   "rows_removed_missing_target": 0,

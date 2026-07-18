@@ -156,6 +156,8 @@ def _evaluate_feature_subset(
     y_train: pd.Series,
     y_test: pd.Series,
     selected_features: list[str],
+    numeric_features: list[str],
+    categorical_features: list[str],
     model_name: str,
     model_config: dict[str, Any],
     metric_names: list[str],
@@ -169,6 +171,18 @@ def _evaluate_feature_subset(
     X_train_selected = X_train.loc[:, selected_features]
     X_test_selected = X_test.loc[:, selected_features]
 
+    selected_numeric_features = [
+        feature
+        for feature in selected_features
+        if feature in numeric_features
+    ]
+
+    selected_categorical_features = [
+        feature
+        for feature in selected_features
+        if feature in categorical_features
+    ]
+
     training_start = perf_counter()
 
     model = train_model(
@@ -177,6 +191,8 @@ def _evaluate_feature_subset(
         model_name=model_name,
         model_config=model_config,
         random_seed=random_seed,
+        numeric_features=selected_numeric_features,
+        categorical_features=selected_categorical_features,
     )
 
     model_training_time = perf_counter() - training_start
@@ -493,6 +509,10 @@ def run_experiment(
                             y_train=y_train,
                             y_test=y_test,
                             selected_features=selected_features,
+                            numeric_features=dataset.numeric_features,
+                            categorical_features=(
+                                dataset.categorical_features
+                            ),
                             model_name=model_name,
                             model_config=model_config,
                             metric_names=metric_names,
@@ -585,6 +605,10 @@ def run_experiment(
                             y_train=y_train,
                             y_test=y_test,
                             selected_features=selected_features,
+                            numeric_features=dataset.numeric_features,
+                            categorical_features=(
+                                dataset.categorical_features
+                            ),
                             model_name=model_name,
                             model_config=model_config,
                             metric_names=metric_names,
@@ -647,6 +671,10 @@ def run_experiment(
                     y_train=y_train,
                     y_test=y_test,
                     selected_features=all_features,
+                    numeric_features=dataset.numeric_features,
+                    categorical_features=(
+                        dataset.categorical_features
+                    ),
                     model_name=model_name,
                     model_config=model_config,
                     metric_names=metric_names,

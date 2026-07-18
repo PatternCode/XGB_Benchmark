@@ -1,5 +1,5 @@
 {
-  "preparation_version": "1.0",
+  "preparation_version": "1.1",
   "dataset_key": "cic_ids2017",
   "dataset_name": "CIC-IDS2017",
   "domain": "cybersecurity",
@@ -541,6 +541,12 @@
     "urg_flag_count",
     "ece_flag_count"
   ],
+  "categorical_feature_mappings": {},
+  "categorical_encoding": {
+    "strategy": "deterministic_consecutive_integer_encoding",
+    "starts_at": 0,
+    "missing_values_encoded": false
+  },
   "removed_zero_variance_features": [
     "bwd_psh_flags",
     "bwd_urg_flags",

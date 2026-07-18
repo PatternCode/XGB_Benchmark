@@ -1,5 +1,5 @@
 {
-  "preparation_version": "1.0",
+  "preparation_version": "1.1",
   "dataset_key": "bank_marketing",
   "dataset_name": "Bank Marketing",
   "domain": "finance",
@@ -8,7 +8,7 @@
   "source_file": "data/raw/bank_marketing/data.csv",
   "source_sha256": "1ae070f431c41d2cc27ebd0e9039409a7fb880d3b1044046f622a266db4c89be",
   "processed_file": "data/processed/bank_marketing/data.csv",
-  "processed_sha256": "ce353da228e5658607aed158bcf959e08e177c7557235425662e72762742b0c0",
+  "processed_sha256": "9e602c561a4ee0bc11cfd303786e6715414c8ab3e7502c3d830e7d868f50dcaa",
   "original_target_column": "y",
   "standardized_original_target_column": "y",
   "target_column": "target",
@@ -135,6 +135,191 @@
     "poutcome"
   ],
   "binary_indicator_features": [],
+  "categorical_feature_mappings": {
+    "job": [
+      {
+        "original_value": "admin.",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "blue-collar",
+        "encoded_value": 1
+      },
+      {
+        "original_value": "entrepreneur",
+        "encoded_value": 2
+      },
+      {
+        "original_value": "housemaid",
+        "encoded_value": 3
+      },
+      {
+        "original_value": "management",
+        "encoded_value": 4
+      },
+      {
+        "original_value": "retired",
+        "encoded_value": 5
+      },
+      {
+        "original_value": "self-employed",
+        "encoded_value": 6
+      },
+      {
+        "original_value": "services",
+        "encoded_value": 7
+      },
+      {
+        "original_value": "student",
+        "encoded_value": 8
+      },
+      {
+        "original_value": "technician",
+        "encoded_value": 9
+      },
+      {
+        "original_value": "unemployed",
+        "encoded_value": 10
+      }
+    ],
+    "marital": [
+      {
+        "original_value": "divorced",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "married",
+        "encoded_value": 1
+      },
+      {
+        "original_value": "single",
+        "encoded_value": 2
+      }
+    ],
+    "education": [
+      {
+        "original_value": "primary",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "secondary",
+        "encoded_value": 1
+      },
+      {
+        "original_value": "tertiary",
+        "encoded_value": 2
+      }
+    ],
+    "default": [
+      {
+        "original_value": "no",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "yes",
+        "encoded_value": 1
+      }
+    ],
+    "housing": [
+      {
+        "original_value": "no",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "yes",
+        "encoded_value": 1
+      }
+    ],
+    "loan": [
+      {
+        "original_value": "no",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "yes",
+        "encoded_value": 1
+      }
+    ],
+    "contact": [
+      {
+        "original_value": "cellular",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "telephone",
+        "encoded_value": 1
+      }
+    ],
+    "month": [
+      {
+        "original_value": "apr",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "aug",
+        "encoded_value": 1
+      },
+      {
+        "original_value": "dec",
+        "encoded_value": 2
+      },
+      {
+        "original_value": "feb",
+        "encoded_value": 3
+      },
+      {
+        "original_value": "jan",
+        "encoded_value": 4
+      },
+      {
+        "original_value": "jul",
+        "encoded_value": 5
+      },
+      {
+        "original_value": "jun",
+        "encoded_value": 6
+      },
+      {
+        "original_value": "mar",
+        "encoded_value": 7
+      },
+      {
+        "original_value": "may",
+        "encoded_value": 8
+      },
+      {
+        "original_value": "nov",
+        "encoded_value": 9
+      },
+      {
+        "original_value": "oct",
+        "encoded_value": 10
+      },
+      {
+        "original_value": "sep",
+        "encoded_value": 11
+      }
+    ],
+    "poutcome": [
+      {
+        "original_value": "failure",
+        "encoded_value": 0
+      },
+      {
+        "original_value": "other",
+        "encoded_value": 1
+      },
+      {
+        "original_value": "success",
+        "encoded_value": 2
+      }
+    ]
+  },
+  "categorical_encoding": {
+    "strategy": "deterministic_consecutive_integer_encoding",
+    "starts_at": 0,
+    "missing_values_encoded": false
+  },
   "removed_zero_variance_features": [],
   "removed_duplicate_features": [],
   "rows_removed_missing_target": 0,
