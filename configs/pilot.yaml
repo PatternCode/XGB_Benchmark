@@ -1,0 +1,105 @@
+experiment:
+  name: pilot_benchmark
+  random_seed: 42
+
+datasets:
+  adult_income:
+    enabled: true
+  bank_marketing:
+    enabled: false
+  breast_cancer_wisconsin:
+    enabled: true
+  cic_ids2017:
+    enabled: false
+  covertype:
+    enabled: false
+  credit_card_fraud:
+    enabled: false
+  dry_bean:
+    enabled: true
+  higgs:
+    enabled: false
+  steel_plates_faults:
+    enabled: false
+  unsw_nb15:
+    enabled: false
+
+cross_validation:
+  n_splits: 2
+  shuffle: true
+
+feature_selection:
+  ranking_methods:
+    - gain
+    - weight
+    - cover
+    - shap
+
+  feature_percentages:
+    - 10
+    - 20
+    - 30
+
+  random_repetitions: 2
+
+ranking_xgboost:
+  booster: gbtree
+  objective: auto
+  eval_metric: auto
+  num_boost_round: 100
+  max_depth: 6
+  eta: 0.05
+  subsample: 0.8
+  colsample_bytree: 0.8
+  tree_method: hist
+
+shap:
+  explainer: tree
+  max_samples: 2000
+
+models:
+  decision_tree:
+    enabled: true
+    max_depths:
+      - 2
+      - 4
+      - 6
+      - null
+
+  knn:
+    enabled: true
+    n_neighbors: 5
+
+  logistic_regression:
+    enabled: true
+    max_iter: 1000
+
+  rbf_svm:
+    enabled: true
+    C: 1.0
+    gamma: scale
+
+  xgboost:
+    enabled: true
+    booster: gbtree
+    objective: auto
+    eval_metric: auto
+    num_boost_round: 100
+    max_depth: 6
+    eta: 0.05
+    subsample: 0.8
+    colsample_bytree: 0.8
+    tree_method: hist
+
+metrics:
+  - accuracy
+  - balanced_accuracy
+  - f1_macro
+  - f1_weighted
+  - roc_auc
+  - pr_auc
+
+output:
+  directory: results/runs
+  save_rankings: true
+  save_selected_features: true

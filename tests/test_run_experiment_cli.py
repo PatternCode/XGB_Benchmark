@@ -83,6 +83,9 @@ def test_main_writes_dataset_checkpoint_and_final_output(
         run_directory: str | Path,
         experiment_name: str,
         config: dict[str, Any],
+        started_at_utc: str | None = None,
+        completed_at_utc: str | None = None,
+        runtime_seconds: float | None = None,
     ) -> dict[str, Path]:
         write_calls.append(experiment_output)
 
@@ -224,6 +227,9 @@ def test_main_creates_run_directory_before_experiment(
         run_directory: str | Path,
         experiment_name: str,
         config: dict[str, Any],
+        started_at_utc: str | None = None,
+        completed_at_utc: str | None = None,
+        runtime_seconds: float | None = None,
     ) -> dict[str, Path]:
         path = Path(run_directory)
 
@@ -323,6 +329,9 @@ def test_main_writes_checkpoint_before_progress(
         run_directory: str | Path,
         experiment_name: str,
         config: dict[str, Any],
+        started_at_utc: str | None = None,
+        completed_at_utc: str | None = None,
+        runtime_seconds: float | None = None,
     ) -> dict[str, Path]:
         call_order.append("write_output")
 
