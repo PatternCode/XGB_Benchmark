@@ -288,11 +288,91 @@ def _build_experiment_output(
     }
 
 
+def _validate_completed_datasets(
+    *,
+    completed_datasets: list[str],
+    enabled_datasets: list[str],
+) -> list[str]:
+    """Validate completed datasets supplied for a resumed run."""
+    if not isinstance(completed_datasets, list):
+        raise ExperimentError(
+            "completed_datasets must be provided as a list."
+        )
+
+    if not all(
+        isinstance(dataset_name, str) and dataset_name.strip()
+        for dataset_name in completed_datasets
+    ):
+        raise ExperimentError(
+            "Every completed dataset name must be a non-empty string."
+        )
+
+    if len(completed_datasets) != len(set(completed_datasets)):
+        raise ExperimentError(
+            "completed_datasets must not contain duplicates."
+        )
+
+    unknown_datasets = set(completed_datasets) - set(enabled_datasets)
+    if unknown_datasets:
+        unknown_text = ", ".join(sorted(unknown_datasets))
+        raise ExperimentError(
+            "Completed datasets are not enabled in the configuration: "
+            f"{unknown_text}."
+        )
+
+    return completed_datasets
+
+
+def _copy_initial_output(
+    initial_output: ExperimentOutput | None,
+) -> ExperimentOutput:
+    """Validate and copy previously saved experiment output."""
+    if initial_output is None:
+        return {
+            "results": [],
+            "rankings": [],
+            "selected_features": [],
+        }
+
+    if not isinstance(initial_output, dict):
+        raise ExperimentError(
+            "initial_output must be a dictionary."
+        )
+
+    copied_output: ExperimentOutput = {}
+    for required_key in (
+        "results",
+        "rankings",
+        "selected_features",
+    ):
+        if required_key not in initial_output:
+            raise ExperimentError(
+                f"initial_output is missing '{required_key}'."
+            )
+
+        records = initial_output[required_key]
+        if not isinstance(records, list):
+            raise ExperimentError(
+                f"initial_output['{required_key}'] must be a list."
+            )
+        if not all(isinstance(record, dict) for record in records):
+            raise ExperimentError(
+                f"Every initial_output['{required_key}'] record "
+                "must be a dictionary."
+            )
+
+        copied_output[required_key] = [dict(record) for record in records]
+
+    return copied_output
+
+
 def run_experiment(
     config: dict[str, Any],
     on_dataset_complete: DatasetCompleteCallback | None = None,
+    completed_datasets: list[str] | None = None,
+    initial_output: ExperimentOutput | None = None,
 ) -> ExperimentOutput:
-    """Run the complete leakage-free benchmark experiment."""
+    """Run or resume the leakage-free benchmark experiment."""
     experiment_name = config["experiment"]["name"]
     base_seed = config["experiment"]["random_seed"]
     enabled_datasets = _get_enabled_datasets(config)
@@ -303,15 +383,37 @@ def run_experiment(
     metric_names = config["metrics"]
     cross_validation = config["cross_validation"]
 
+    validated_completed_datasets = _validate_completed_datasets(
+        completed_datasets=(
+            [] if completed_datasets is None else completed_datasets
+        ),
+        enabled_datasets=enabled_datasets,
+    )
+    completed_dataset_set = set(validated_completed_datasets)
+    cumulative_output = _copy_initial_output(initial_output)
+
+    if completed_dataset_set and initial_output is None:
+        raise ExperimentError(
+            "initial_output is required when completed_datasets is not "
+            "empty."
+        )
+
     n_datasets = len(enabled_datasets)
     n_folds = cross_validation["n_splits"]
     experiment_start = perf_counter()
 
-    print("=" * 60)
-    print(f"Experiment: {experiment_name}")
-    print(f"Datasets: {n_datasets}")
-    print(f"Outer folds: {n_folds}")
-    print("=" * 60)
+    print("=" * 60, flush=True)
+    print(f"Experiment: {experiment_name}", flush=True)
+    print(f"Datasets: {n_datasets}", flush=True)
+    print(f"Outer folds: {n_folds}", flush=True)
+    if validated_completed_datasets:
+        print(
+            "Resume mode: "
+            f"{len(validated_completed_datasets)} completed dataset(s) "
+            "will be skipped",
+            flush=True,
+        )
+    print("=" * 60, flush=True)
 
     splitter = StratifiedKFold(
         n_splits=n_folds,
@@ -319,19 +421,31 @@ def run_experiment(
         random_state=base_seed if cross_validation["shuffle"] else None,
     )
 
-    results: list[dict[str, Any]] = []
-    ranking_rows: list[dict[str, Any]] = []
-    selected_feature_rows: list[dict[str, Any]] = []
+    results = cumulative_output["results"]
+    ranking_rows = cumulative_output["rankings"]
+    selected_feature_rows = cumulative_output["selected_features"]
 
     for dataset_index, dataset_name in enumerate(enabled_datasets):
+        if dataset_name in completed_dataset_set:
+            print(
+                f"[Dataset {dataset_index + 1}/{n_datasets}] "
+                f"Skipping completed dataset: {dataset_name}",
+                flush=True,
+            )
+            continue
+
         dataset_start = perf_counter()
-        print()
-        print(f"[Dataset {dataset_index + 1}/{n_datasets}] {dataset_name}")
+        print(flush=True)
+        print(
+            f"[Dataset {dataset_index + 1}/{n_datasets}] {dataset_name}",
+            flush=True,
+        )
 
         dataset = load_dataset(dataset_name)
         print(
             f"  Samples: {dataset.X.shape[0]:,} | "
-            f"Features: {dataset.n_features}"
+            f"Features: {dataset.n_features}",
+            flush=True,
         )
 
         subset_sizes = get_unique_feature_counts(
@@ -344,7 +458,10 @@ def run_experiment(
             start=1,
         ):
             fold_start = perf_counter()
-            print(f"  [Fold {outer_fold}/{n_folds}] Starting")
+            print(
+                f"  [Fold {outer_fold}/{n_folds}] Starting",
+                flush=True,
+            )
 
             X_train = dataset.X.iloc[train_indices].copy()
             X_test = dataset.X.iloc[test_indices].copy()
@@ -357,7 +474,10 @@ def run_experiment(
                 outer_fold=outer_fold,
             )
 
-            print("    Computing feature-importance rankings")
+            print(
+                "    Computing feature-importance rankings",
+                flush=True,
+            )
             ranking_start = perf_counter()
             _, rankings = compute_feature_importance(
                 X_train=X_train,
@@ -370,7 +490,8 @@ def run_experiment(
             ranking_time = perf_counter() - ranking_start
             print(
                 "    Rankings completed in "
-                f"{_format_duration(ranking_time)}"
+                f"{_format_duration(ranking_time)}",
+                flush=True,
             )
 
             for method, ranking in rankings.items():
@@ -385,7 +506,10 @@ def run_experiment(
                 )
 
             for method in ranking_methods:
-                print(f"    Selection method: {method}")
+                print(
+                    f"    Selection method: {method}",
+                    flush=True,
+                )
                 ranking = rankings[method]
 
                 for subset_index, subset_info in enumerate(subset_sizes):
@@ -397,7 +521,8 @@ def run_experiment(
                     )
                     print(
                         f"      {requested_percentage:g}% "
-                        f"({n_selected_features} features)"
+                        f"({n_selected_features} features)",
+                        flush=True,
                     )
 
                     selected_features = select_top_k(
@@ -461,18 +586,22 @@ def run_experiment(
                             )
                         )
 
-            print("    Selection method: random")
+            print("    Selection method: random", flush=True)
             for subset_index, subset_info in enumerate(subset_sizes):
                 k = int(subset_info["n_selected_features"])
                 requested_percentage = float(
                     subset_info["requested_percentage"]
                 )
-                print(f"      {requested_percentage:g}% ({k} features)")
+                print(
+                    f"      {requested_percentage:g}% ({k} features)",
+                    flush=True,
+                )
 
                 for repetition in range(random_repetitions):
                     print(
                         f"        Repetition {repetition + 1}/"
-                        f"{random_repetitions}"
+                        f"{random_repetitions}",
+                        flush=True,
                     )
                     random_seed = _derive_random_seed(
                         base_seed=base_seed,
@@ -537,7 +666,10 @@ def run_experiment(
                             )
                         )
 
-            print("    Selection method: all_features")
+            print(
+                "    Selection method: all_features",
+                flush=True,
+            )
             all_features = X_train.columns.tolist()
             selected_feature_rows.extend(
                 _build_selected_feature_rows(
@@ -589,13 +721,15 @@ def run_experiment(
             fold_elapsed = perf_counter() - fold_start
             print(
                 f"  [Fold {outer_fold}/{n_folds}] Completed in "
-                f"{_format_duration(fold_elapsed)}"
+                f"{_format_duration(fold_elapsed)}",
+                flush=True,
             )
 
         dataset_elapsed = perf_counter() - dataset_start
         print(
             f"[Dataset {dataset_index + 1}/{n_datasets}] "
-            f"Completed in {_format_duration(dataset_elapsed)}"
+            f"Completed in {_format_duration(dataset_elapsed)}",
+            flush=True,
         )
 
         experiment_output = _build_experiment_output(
@@ -607,13 +741,14 @@ def run_experiment(
             on_dataset_complete(dataset_name, experiment_output)
 
     experiment_elapsed = perf_counter() - experiment_start
-    print()
-    print("=" * 60)
+    print(flush=True)
+    print("=" * 60, flush=True)
     print(
         "Experiment computations completed in "
-        f"{_format_duration(experiment_elapsed)}"
+        f"{_format_duration(experiment_elapsed)}",
+        flush=True,
     )
-    print("=" * 60)
+    print("=" * 60, flush=True)
 
     return _build_experiment_output(
         results=results,
