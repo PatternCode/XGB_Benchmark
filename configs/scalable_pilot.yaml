@@ -1,5 +1,5 @@
 experiment:
-  name: xgb_benchmark
+  name: scalable_pilot
   random_seed: 42
 
 datasets:
@@ -10,7 +10,7 @@ datasets:
   breast_cancer_wisconsin:
     enabled: true
   cic_ids2017:
-    enabled: True
+    enabled: false
   covertype:
     enabled: true
   credit_card_fraud:
@@ -18,7 +18,7 @@ datasets:
   dry_bean:
     enabled: true
   higgs:
-    enabled: True
+    enabled: false
   steel_plates_faults:
     enabled: true
   unsw_nb15:
@@ -61,7 +61,7 @@ ranking_xgboost:
 
 shap:
   explainer: tree
-  max_samples: 10000   # null for no limitation
+  max_samples: 10000
 
 models:
   decision_tree:
