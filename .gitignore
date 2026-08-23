@@ -109,15 +109,7 @@ data/processed/**/*.npz
 !data/raw/**/.gitkeep
 !data/processed/**/.gitkeep
 
-# ==========================================================
-# Experiment Outputs
-# ==========================================================
 
-# Ignore everything generated during benchmarking
-results/**
-
-# Keep directory structure
-!results/.gitkeep
 
 # ==========================================================
 # Trained Models
@@ -162,13 +154,28 @@ data/reports/*
 !data/reports/.gitkeep
 
 
-# Benchmark results
+# ==========================================================
+# Benchmark Results
+# ==========================================================
+
+# Ignore benchmark-generated outputs by default
 results/**
+
+# Keep top-level directory marker
+!results/.gitkeep
+
+# Keep directory structure
 !results/runs/
 !results/runs/.gitkeep
+
 !results/summaries/
-!results/summaries/dataset_performance_*.md
 !results/summaries/.gitkeep
+
 !results/figures/
 !results/figures/.gitkeep
+
+# Keep manuscript-facing summary tables
+!results/summaries/dataset_performance_*.md
+!results/summaries/cross_dataset_best_subset_*.md
+!results/summaries/compact_decision_tree_summary_*.md
 
