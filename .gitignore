@@ -167,6 +167,7 @@ results/**
 !results/runs/
 !results/runs/.gitkeep
 !results/summaries/
+!results/summaries/dataset_performance_*.md
 !results/summaries/.gitkeep
 !results/figures/
 !results/figures/.gitkeep
