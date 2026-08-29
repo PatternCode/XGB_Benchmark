@@ -176,6 +176,6 @@ results/**
 
 # Keep manuscript-facing summary tables
 !results/summaries/dataset_performance_*.md
-!results/summaries/cross_dataset_best_subset_*.md
+!results/summaries/cross_dataset_shap_comparison_*.md
 !results/summaries/compact_decision_tree_summary_*.md
 
